@@ -1,5 +1,6 @@
 import gridIcon from "../../assets/grid.svg";
 import listIcon from "../../assets/list.svg";
+import searchIcon from "../../assets/search.svg";
 import { Link } from "../../components/link";
 import { Container } from "../../components/ui/container";
 import { HStack } from "../../components/ui/hstack";
@@ -13,59 +14,65 @@ export function Component() {
   return (
     <Container>
       <HStack className="py-4">
-        <HStack className="space-x-2">
-          <input placeholder="Search..." className="bg-neutral-2 rounded" />
-          <div>{data?.devices.length ?? 0} devices</div>
+        <HStack className="space-x-2 w-80 relative">
+          <img src={searchIcon} className="absolute left-4" />
+          <input
+            placeholder="Search..."
+            className="bg-neutral-2 rounded flex-1 h-8 pl-8 outline-primary-web-unifi-color-ublue-06 outline-1"
+          />
+          <div className="text-xs text-gray-4">
+            {data?.devices.length ?? 0} devices
+          </div>
         </HStack>
 
         <Spacer />
         <HStack className="space-x-2">
-          <button className="p-2">
+          <button style={{ padding: "6px" }}>
             <img src={listIcon} />
           </button>
-          <button className="p-2">
+          <button style={{ padding: "6px" }}>
             <img src={gridIcon} />
           </button>
-          <div>Filter</div>
+          <div className="text-sm text-text-text-3">Filter</div>
         </HStack>
       </HStack>
 
-      <table>
+      <table className="w-full">
         <thead>
-          <tr>
+          <tr className="border-b border-solid border-neutral-neutral-03-light">
             <td />
-            <th className="text-left font-bold">Product Line</th>
-            <th className="text-left font-bold">Name</th>
+            <th className="text-left font-bold text-sm px-2 py-0.5">
+              Product Line
+            </th>
+            <th className="text-left font-bold text-sm px-2 py-0.5">Name</th>
           </tr>
         </thead>
         <tbody>
           {data?.devices.map((rawDevice) => {
             const deviceResult = uidbDeviceType.safeParse(rawDevice);
             if (!deviceResult.success) {
-              return (
-                <tr>
-                  <td />
-                  <td>error</td>
-                  <td />
-                </tr>
-              );
+              return null; // TODO Handle
             }
 
             const device = deviceResult.data;
 
             return (
-              <tr key={device.id}>
-                <td>
+              <tr
+                key={device.id}
+                className="border-b border-solid border-neutral-neutral-03-light"
+              >
+                <td className="p-1.5 align-middle w-8">
                   {device.icon ? (
                     <img
+                      className="h-5 w-5 inline-block"
                       src={`https://static.ui.com/fingerprint/ui/icons/${device.icon.id}_${device.icon.resolutions?.[0]?.[0]}x${device.icon.resolutions?.[0]?.[1]}.png`}
                     />
                   ) : null}
                 </td>
-                <td>
+                <td className="text-text-text-2-light text-sm px-2 py-0.5 align-middle">
                   <Link to={`/devices/${device.id}`}>{device.line?.name}</Link>
                 </td>
-                <td>
+                <td className="text-text-text-2-light text-sm px-2 py-0.5 align-middle">
                   <Link to={`/devices/${device.id}`}>
                     {device.product?.name}
                   </Link>

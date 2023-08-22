@@ -15,6 +15,9 @@ export default {
       "neutral-2": "#F6F6F8",
       "neutral-web-unifi-color-neutral-01": "#F9FAFA",
       "text-text-3": "rgba(0, 0, 0, 0.45)",
+      "gray-4": "#BDBDBD",
+      "neutral-neutral-03-light": "#EDEDF0",
+      "text-text-2-light": "rgba(0, 0, 0, 0.65)",
     },
     fontFamily: {
       sans: ["Graphik", "sans-serif"],

@@ -5,18 +5,17 @@ import { Spacer } from "../ui/spacer";
 
 export function TopBar() {
   return (
-    <HStack
-      className="bg-neutral-web-unifi-color-neutral-02 text-web-unifi-text-3"
-      style={{ height: "50px" }}
-    >
-      <div>
-        <img src={logo} className="h-10 w-10" />
+    <HStack className="bg-neutral-web-unifi-color-neutral-02 text-web-unifi-text-3 pr-8 space-x-2">
+      <div className="p-1">
+        <div style={{ padding: "1px" }}>
+          <img src={logo} className="h-10 w-10" />
+        </div>
       </div>
-      <div style={{ color: "var(--text-web-unifi-text-3, #808893)" }}>
-        <Link to="/">Devices</Link>
-      </div>
+      <Link className="text-text-web-unifi-text-3 text-sm" to="/">
+        Devices
+      </Link>
       <Spacer />
-      <div>Jonas</div>
+      <div className="text-text-web-unifi-text-3 text-sm">Jonas</div>
     </HStack>
   );
 }
