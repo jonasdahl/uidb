@@ -1,4 +1,5 @@
 import logo from "../../assets/logo.svg";
+import { Link } from "../link";
 import { HStack } from "../ui/hstack";
 import { Spacer } from "../ui/spacer";
 
@@ -12,7 +13,7 @@ export function TopBar() {
         <img src={logo} className="h-10 w-10" />
       </div>
       <div style={{ color: "var(--text-web-unifi-text-3, #808893)" }}>
-        Devices
+        <Link to="/">Devices</Link>
       </div>
       <Spacer />
       <div>Jonas</div>
