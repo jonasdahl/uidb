@@ -1,6 +1,9 @@
 import { z } from "zod";
 
-const uidbAbstractType = z.object({ devices: z.array(z.unknown()) });
+const uidbAbstractType = z.object({
+  version: z.string().optional().nullable(),
+  devices: z.array(z.unknown()),
+});
 
 export async function getUidb() {
   const response = await fetch(

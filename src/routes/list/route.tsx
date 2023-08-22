@@ -17,6 +17,7 @@ export function Component() {
       <table>
         <thead>
           <tr>
+            <th />
             <th>Product Name</th>
             <th>Product Abbreviation</th>
           </tr>
@@ -38,6 +39,7 @@ export function Component() {
             if (!deviceResult.success) {
               return (
                 <tr>
+                  <td />
                   <td>error</td>
                   <td />
                 </tr>
@@ -48,6 +50,7 @@ export function Component() {
 
             return (
               <tr key={device.id}>
+                <td>{device.product?.name}</td>
                 <td>{device.product?.name}</td>
                 <td>{device.product?.abbrev}</td>
               </tr>
