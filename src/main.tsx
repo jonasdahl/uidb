@@ -13,8 +13,14 @@ import "./reset.css";
 import "./index.css";
 
 const router = createBrowserRouter([
-  { path: "/", loader: () => redirect("/list") },
-  { path: "/list", lazy: () => import("./routes/list/route") },
+  {
+    lazy: () => import("./routes/root.tsx"),
+    children: [
+      { path: "/devices", lazy: () => import("./routes/devices/route.tsx") },
+      { path: "/", loader: () => redirect("/devices") },
+      { path: "*", lazy: () => import("./routes/404.tsx") },
+    ],
+  },
 ]);
 
 const queryClient = new QueryClient();
@@ -22,7 +28,7 @@ const queryClient = new QueryClient();
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
+      <RouterProvider router={router} fallbackElement />
     </QueryClientProvider>
   </React.StrictMode>
 );

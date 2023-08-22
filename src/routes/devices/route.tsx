@@ -1,7 +1,4 @@
 import { z } from "zod";
-import logo from "../../assets/logo/icon.svg";
-import { HStack } from "../../components/ui/hstack";
-import { Spacer } from "../../components/ui/spacer";
 import { Stack } from "../../components/ui/stack";
 import { useUidb } from "../../hooks/use-uidb";
 
@@ -10,16 +7,6 @@ export function Component() {
 
   return (
     <Stack>
-      <HStack style={{ backgroundColor: "#ccc" }}>
-        <div>
-          <img src={logo} />
-        </div>
-        <div style={{ color: "var(--text-web-unifi-text-3, #808893)" }}>
-          Devices
-        </div>
-        <Spacer />
-        <div>Jonas</div>
-      </HStack>
       <table>
         <thead>
           <tr>
