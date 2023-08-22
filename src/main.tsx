@@ -1,3 +1,5 @@
+/// <reference types="vite/client" />
+
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
 import { createRoot } from "react-dom/client";
