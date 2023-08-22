@@ -1,3 +1,4 @@
+import cx from "classnames";
 import { ComponentProps, forwardRef } from "react";
 
 type Props = ComponentProps<"div"> & { direction?: "row" | "column" };
@@ -9,7 +10,11 @@ export const Stack = forwardRef<HTMLDivElement, Props>(function Stack(
   return (
     <div
       {...props}
-      style={{ display: "flex", flexDirection: direction, ...props.style }}
+      className={cx(
+        "flex",
+        direction === "column" ? "flex-col" : "flex-row",
+        props.className
+      )}
       ref={ref}
     />
   );

@@ -1,18 +1,40 @@
 import { z } from "zod";
-import { Stack } from "../../components/ui/stack";
+import gridIcon from "../../assets/grid.svg";
+import listIcon from "../../assets/list.svg";
+import { Container } from "../../components/ui/container";
+import { HStack } from "../../components/ui/hstack";
+import { Spacer } from "../../components/ui/spacer";
 import { useUidb } from "../../hooks/use-uidb";
 
 export function Component() {
   const { data } = useUidb();
 
   return (
-    <Stack>
+    <Container>
+      <HStack className="py-4">
+        <HStack className="space-x-2">
+          <input placeholder="Search..." className="bg-neutral-2 rounded" />
+          <div>{data?.devices.length ?? 0} devices</div>
+        </HStack>
+
+        <Spacer />
+        <HStack className="space-x-2">
+          <button className="p-2">
+            <img src={listIcon} />
+          </button>
+          <button className="p-2">
+            <img src={gridIcon} />
+          </button>
+          <div>Filter</div>
+        </HStack>
+      </HStack>
+
       <table>
         <thead>
           <tr>
-            <th />
-            <th>Product Name</th>
-            <th>Product Abbreviation</th>
+            <td />
+            <th className="text-left font-bold">Product Line</th>
+            <th className="text-left font-bold">Name</th>
           </tr>
         </thead>
         <tbody>
@@ -31,6 +53,13 @@ export function Component() {
                   .object({
                     resolutions: z.array(z.tuple([z.number(), z.number()])),
                     id: z.string(),
+                  })
+                  .optional()
+                  .nullable(),
+                line: z
+                  .object({
+                    name: z.string().optional().nullable(),
+                    id: z.string().optional().nullable(),
                   })
                   .optional()
                   .nullable(),
@@ -57,13 +86,13 @@ export function Component() {
                     />
                   ) : null}
                 </td>
+                <td>{device.line?.name}</td>
                 <td>{device.product?.name}</td>
-                <td>{device.product?.abbrev}</td>
               </tr>
             );
           })}
         </tbody>
       </table>
-    </Stack>
+    </Container>
   );
 }
