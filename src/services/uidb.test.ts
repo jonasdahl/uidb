@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { getUidb } from "./uidb";
 
 describe("uidb fetcher", () => {
-  it("returns the resolved json object", async () => {
+  it("returns the resolved json object from static.ui.com", async () => {
     // Mock an "empty" (no devices) uidb response using msw
     const mockedResponse = {
       version: "96891c4f-6940-4475-9c4d-15de1863bf1c",
@@ -23,5 +23,7 @@ describe("uidb fetcher", () => {
 
     expect(data.version).toEqual("96891c4f-6940-4475-9c4d-15de1863bf1c"); // as in the mocked object
     expect(data.devices.length).toEqual(0); // no devices in the mocked response
+
+    server.close();
   });
 });
