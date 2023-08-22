@@ -8,6 +8,8 @@ import {
 } from "react-router-dom";
 import "./reset.css";
 
+import "./index.css";
+
 const router = createBrowserRouter([
   { path: "/", loader: () => redirect("/list") },
   { path: "/list", lazy: () => import("./routes/list/route") },
