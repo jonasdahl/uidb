@@ -1,10 +1,11 @@
-import { z } from "zod";
 import gridIcon from "../../assets/grid.svg";
 import listIcon from "../../assets/list.svg";
+import { Link } from "../../components/link";
 import { Container } from "../../components/ui/container";
 import { HStack } from "../../components/ui/hstack";
 import { Spacer } from "../../components/ui/spacer";
 import { useUidb } from "../../hooks/use-uidb";
+import { uidbDeviceType } from "../../services/uidb";
 
 export function Component() {
   const { data } = useUidb();
@@ -39,32 +40,7 @@ export function Component() {
         </thead>
         <tbody>
           {data?.devices.map((rawDevice) => {
-            const deviceResult = z
-              .object({
-                id: z.string().optional().nullable(),
-                product: z
-                  .object({
-                    abbrev: z.string().optional().nullable(),
-                    name: z.string().optional().nullable(),
-                  })
-                  .optional()
-                  .nullable(),
-                icon: z
-                  .object({
-                    resolutions: z.array(z.tuple([z.number(), z.number()])),
-                    id: z.string(),
-                  })
-                  .optional()
-                  .nullable(),
-                line: z
-                  .object({
-                    name: z.string().optional().nullable(),
-                    id: z.string().optional().nullable(),
-                  })
-                  .optional()
-                  .nullable(),
-              })
-              .safeParse(rawDevice);
+            const deviceResult = uidbDeviceType.safeParse(rawDevice);
             if (!deviceResult.success) {
               return (
                 <tr>
@@ -86,8 +62,14 @@ export function Component() {
                     />
                   ) : null}
                 </td>
-                <td>{device.line?.name}</td>
-                <td>{device.product?.name}</td>
+                <td>
+                  <Link to={`/devices/${device.id}`}>{device.line?.name}</Link>
+                </td>
+                <td>
+                  <Link to={`/devices/${device.id}`}>
+                    {device.product?.name}
+                  </Link>
+                </td>
               </tr>
             );
           })}

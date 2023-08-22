@@ -13,6 +13,8 @@ export default {
       "neutral-web-unifi-color-neutral-02": "#F4F5F6",
       "primary-web-unifi-color-ublue-06": "#006FFF",
       "neutral-2": "#F6F6F8",
+      "neutral-web-unifi-color-neutral-01": "#F9FAFA",
+      "text-text-3": "rgba(0, 0, 0, 0.45)",
     },
     fontFamily: {
       sans: ["Graphik", "sans-serif"],
