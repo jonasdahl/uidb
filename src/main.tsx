@@ -5,6 +5,7 @@ import {
   createBrowserRouter,
   redirect,
 } from "react-router-dom";
+import "./reset.css";
 
 const router = createBrowserRouter([
   { path: "/", loader: () => redirect("/list") },
