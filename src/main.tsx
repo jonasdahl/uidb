@@ -8,7 +8,7 @@ import {
 
 const router = createBrowserRouter([
   { path: "/", loader: () => redirect("/list") },
-  { path: "/list", element: <div>List</div> },
+  { path: "/list", lazy: () => import("./routes/list/route") },
 ]);
 
 createRoot(document.getElementById("root")!).render(
