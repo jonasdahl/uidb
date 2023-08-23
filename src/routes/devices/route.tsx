@@ -1,7 +1,10 @@
+import * as Popover from "@radix-ui/react-popover";
+import { uniqBy } from "remeda";
 import gridIcon from "../../assets/grid.svg";
 import listIcon from "../../assets/list.svg";
 import searchIcon from "../../assets/search.svg";
 import { Link } from "../../components/link";
+import { Checkbox } from "../../components/ui/checkbox";
 import { Container } from "../../components/ui/container";
 import { HStack } from "../../components/ui/hstack";
 import { Spacer } from "../../components/ui/spacer";
@@ -10,6 +13,18 @@ import { uidbDeviceType } from "../../services/uidb";
 
 export function Component() {
   const { data } = useUidb();
+  const productLines = uniqBy(
+    data?.devices
+      .flatMap((d) => {
+        const parsed = uidbDeviceType.safeParse(d);
+        if (parsed.success) {
+          return [parsed.data];
+        }
+        return [];
+      })
+      .map((d) => d.line) ?? [],
+    (line) => line?.id
+  );
 
   return (
     <Container>
@@ -33,7 +48,26 @@ export function Component() {
           <button style={{ padding: "6px" }}>
             <img src={gridIcon} />
           </button>
-          <div className="text-sm text-text-text-3">Filter</div>
+          <Popover.Root>
+            <Popover.Trigger asChild>
+              <button className="text-sm text-text-text-3">Filter</button>
+            </Popover.Trigger>
+            <Popover.Portal>
+              <Popover.Content asChild align="start">
+                <div className="p-4 rounded-lg bg-neutral-web-unifi-color-neutral-00 shadow-popover space-y-4">
+                  <h4 className="text-sm font-bold">Product line</h4>
+                  <div className="space-y-2 max-h-80 overflow-auto">
+                    {productLines.map((line) => (
+                      <Checkbox>{line?.name}</Checkbox>
+                    ))}
+                  </div>
+                  <button className="text-semantic-destructive-web-unifi-color-red-06 text-sm">
+                    Reset
+                  </button>
+                </div>
+              </Popover.Content>
+            </Popover.Portal>
+          </Popover.Root>
         </HStack>
       </HStack>
 

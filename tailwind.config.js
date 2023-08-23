@@ -18,10 +18,17 @@ export default {
       "gray-4": "#BDBDBD",
       "neutral-neutral-03-light": "#EDEDF0",
       "text-text-2-light": "rgba(0, 0, 0, 0.65)",
+      "neutral-web-unifi-color-neutral-00": "#fff",
+      "semantic-destructive-web-unifi-color-red-06": "#F03A3E",
+      "neutral-6": "#B6B9C4",
+      "u-blue-6-primary": "#006FFF",
     },
     fontFamily: {
       sans: ["Graphik", "sans-serif"],
       serif: ["Merriweather", "serif"],
+    },
+    boxShadow: {
+      popover: "0px 16px 32px 0px rgba(28, 30, 45, 0.20)",
     },
     extend: {},
   },
