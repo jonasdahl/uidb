@@ -22,6 +22,7 @@ export default {
       "semantic-destructive-web-unifi-color-red-06": "#F03A3E",
       "neutral-6": "#B6B9C4",
       "u-blue-6-primary": "#006FFF",
+      white: "#ffffff",
     },
     fontFamily: {
       sans: ["Graphik", "sans-serif"],

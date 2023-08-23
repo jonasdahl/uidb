@@ -1,10 +1,5 @@
 import { z } from "zod";
 
-const uidbAbstractType = z.object({
-  version: z.string().optional().nullable(),
-  devices: z.array(z.unknown()),
-});
-
 export const uidbDeviceType = z.object({
   id: z.string().optional().nullable(),
   product: z
@@ -28,6 +23,11 @@ export const uidbDeviceType = z.object({
     })
     .optional()
     .nullable(),
+});
+
+const uidbAbstractType = z.object({
+  version: z.string().optional().nullable(),
+  devices: z.array(uidbDeviceType),
 });
 
 export async function getUidb() {

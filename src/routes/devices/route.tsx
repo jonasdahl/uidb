@@ -1,5 +1,6 @@
 import * as Popover from "@radix-ui/react-popover";
-import { uniqBy } from "remeda";
+import { useState } from "react";
+import { pipe, sortBy, uniqBy } from "remeda";
 import gridIcon from "../../assets/grid.svg";
 import listIcon from "../../assets/list.svg";
 import searchIcon from "../../assets/search.svg";
@@ -13,30 +14,32 @@ import { uidbDeviceType } from "../../services/uidb";
 
 export function Component() {
   const { data } = useUidb();
-  const productLines = uniqBy(
-    data?.devices
-      .flatMap((d) => {
-        const parsed = uidbDeviceType.safeParse(d);
-        if (parsed.success) {
-          return [parsed.data];
-        }
-        return [];
-      })
-      .map((d) => d.line) ?? [],
-    (line) => line?.id
+  const [selectedLineIds, setSelectedLineIds] = useState<string[]>([]);
+  const productLines = pipe(
+    data?.devices.map((d) => d.line) ?? [],
+    uniqBy((line) => line?.id),
+    sortBy((line) => line?.name ?? "")
   );
+  const devices =
+    data?.devices.filter((device) => {
+      if (selectedLineIds.length === 0) {
+        return true;
+      }
+      return selectedLineIds.includes(device.line?.id ?? "");
+    }) ?? [];
+  const totalDevices = data?.devices.length ?? 0;
 
   return (
     <Container>
       <HStack className="py-4">
-        <HStack className="space-x-2 w-80 relative">
+        <HStack className="space-x-2 relative">
           <img src={searchIcon} className="absolute left-4" />
           <input
             placeholder="Search..."
-            className="bg-neutral-2 rounded flex-1 h-8 pl-8 outline-primary-web-unifi-color-ublue-06 outline-1"
+            className="bg-neutral-2 rounded flex-1 h-8 pl-8 outline-primary-web-unifi-color-ublue-06 outline-1 w-72"
           />
           <div className="text-xs text-gray-4">
-            {data?.devices.length ?? 0} devices
+            {devices.length ?? 0} devices
           </div>
         </HStack>
 
@@ -57,11 +60,36 @@ export function Component() {
                 <div className="p-4 rounded-lg bg-neutral-web-unifi-color-neutral-00 shadow-popover space-y-4">
                   <h4 className="text-sm font-bold">Product line</h4>
                   <div className="space-y-2 max-h-80 overflow-auto">
-                    {productLines.map((line) => (
-                      <Checkbox>{line?.name}</Checkbox>
-                    ))}
+                    {productLines.map((line) => {
+                      const lineId = line?.id;
+                      if (!lineId) {
+                        return null;
+                      }
+                      const isChecked = selectedLineIds.some(
+                        (id) => id === lineId
+                      );
+                      return (
+                        <Checkbox
+                          checked={isChecked}
+                          onChange={() =>
+                            setSelectedLineIds((previouslySelected) =>
+                              previouslySelected.some((id) => id === lineId)
+                                ? previouslySelected.filter(
+                                    (id) => id !== lineId
+                                  )
+                                : [...previouslySelected, lineId]
+                            )
+                          }
+                        >
+                          {line?.name}
+                        </Checkbox>
+                      );
+                    })}
                   </div>
-                  <button className="text-semantic-destructive-web-unifi-color-red-06 text-sm">
+                  <button
+                    className="text-semantic-destructive-web-unifi-color-red-06 text-sm"
+                    onClick={() => setSelectedLineIds([])}
+                  >
                     Reset
                   </button>
                 </div>
@@ -82,7 +110,7 @@ export function Component() {
           </tr>
         </thead>
         <tbody>
-          {data?.devices.map((rawDevice) => {
+          {devices?.map((rawDevice) => {
             const deviceResult = uidbDeviceType.safeParse(rawDevice);
             if (!deviceResult.success) {
               return null; // TODO Handle
