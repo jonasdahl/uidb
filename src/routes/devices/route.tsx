@@ -1,4 +1,6 @@
+import { Combobox } from "@headlessui/react";
 import * as Popover from "@radix-ui/react-popover";
+import { matchSorter } from "match-sorter";
 import { useState } from "react";
 import { pipe, sortBy, uniqBy } from "remeda";
 import gridIcon from "../../assets/grid.svg";
@@ -29,15 +31,43 @@ export function Component() {
     }) ?? [];
   // const totalDevices = data?.devices.length ?? 0;
 
+  const [query, setQuery] = useState("");
+
+  const suggestions = !query
+    ? data?.devices ?? []
+    : matchSorter(data?.devices ?? [], query, {
+        keys: [(d) => d.product?.name ?? ""],
+      }).slice(0, 10);
+  console.log(suggestions);
+
   return (
     <Container>
       <HStack className="py-4">
         <HStack className="space-x-2 relative">
-          <img src={searchIcon} className="absolute left-4" />
-          <input
-            placeholder="Search..."
-            className="bg-neutral-2 rounded flex-1 h-8 pl-8 outline-primary-web-unifi-color-ublue-06 outline-1 w-72"
-          />
+          <Combobox>
+            <div className="relative">
+              <Combobox.Input
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder="Search..."
+                className="bg-neutral-2 rounded flex-1 h-8 pl-8 outline-primary-web-unifi-color-ublue-06 outline-1 w-72"
+              />
+              <Combobox.Options className="absolute w-full rounded-b-lg bg-neutral-web-unifi-color-neutral-00 shadow-popover p-4">
+                {suggestions.map((device) => {
+                  return (
+                    <Combobox.Option
+                      key={device.id}
+                      value={device.product?.name}
+                    >
+                      <div className="text-sm text-text-web-unifi-text-2">
+                        {device.product?.name}
+                      </div>
+                    </Combobox.Option>
+                  );
+                })}
+              </Combobox.Options>
+            </div>
+          </Combobox>
+          <img src={searchIcon} className="absolute" />
           <div className="text-xs text-gray-4">
             {devices.length ?? 0} devices
           </div>
@@ -56,36 +86,38 @@ export function Component() {
               <button className="text-sm text-text-text-3">Filter</button>
             </Popover.Trigger>
             <Popover.Portal>
-              <Popover.Content asChild align="start">
-                <div className="p-4 rounded-lg bg-neutral-web-unifi-color-neutral-00 shadow-popover space-y-4">
-                  <h4 className="text-sm font-bold">Product line</h4>
-                  <div className="space-y-2 max-h-80 overflow-auto">
-                    {productLines.map((line) => {
-                      const lineId = line?.id;
-                      if (!lineId) {
-                        return null;
-                      }
-                      const isChecked = selectedLineIds.some(
-                        (id) => id === lineId
-                      );
-                      return (
-                        <Checkbox
-                          checked={isChecked}
-                          onChange={() =>
-                            setSelectedLineIds((previouslySelected) =>
-                              previouslySelected.some((id) => id === lineId)
-                                ? previouslySelected.filter(
-                                    (id) => id !== lineId
-                                  )
-                                : [...previouslySelected, lineId]
-                            )
-                          }
-                        >
-                          {line?.name}
-                        </Checkbox>
-                      );
-                    })}
-                  </div>
+              <Popover.Content
+                align="start"
+                className="rounded-lg bg-neutral-web-unifi-color-neutral-00 shadow-popover space-y-4 py-4"
+              >
+                <h4 className="text-sm font-bold px-4">Product line</h4>
+                <div className="space-y-2 max-h-60 overflow-auto px-4">
+                  {productLines.map((line) => {
+                    const lineId = line?.id;
+                    if (!lineId) {
+                      return null;
+                    }
+                    const isChecked = selectedLineIds.some(
+                      (id) => id === lineId
+                    );
+                    return (
+                      <Checkbox
+                        key={line.id}
+                        checked={isChecked}
+                        onChange={() =>
+                          setSelectedLineIds((previouslySelected) =>
+                            previouslySelected.some((id) => id === lineId)
+                              ? previouslySelected.filter((id) => id !== lineId)
+                              : [...previouslySelected, lineId]
+                          )
+                        }
+                      >
+                        {line?.name}
+                      </Checkbox>
+                    );
+                  })}
+                </div>
+                <div className="px-4">
                   <button
                     className="text-semantic-destructive-web-unifi-color-red-06 text-sm"
                     onClick={() => setSelectedLineIds([])}

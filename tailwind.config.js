@@ -23,6 +23,7 @@ export default {
       "neutral-6": "#B6B9C4",
       "u-blue-6-primary": "#006FFF",
       white: "#ffffff",
+      "text-web-unifi-text-2": "#50565E",
     },
     fontFamily: {
       sans: ["Graphik", "sans-serif"],
