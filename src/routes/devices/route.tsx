@@ -27,7 +27,7 @@ export function Component() {
       }
       return selectedLineIds.includes(device.line?.id ?? "");
     }) ?? [];
-  const totalDevices = data?.devices.length ?? 0;
+  // const totalDevices = data?.devices.length ?? 0;
 
   return (
     <Container>
