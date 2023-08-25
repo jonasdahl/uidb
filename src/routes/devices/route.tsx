@@ -86,7 +86,7 @@ export function Component() {
               <Combobox.Input
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Search..."
-                className="bg-neutral-2 rounded flex-1 h-8 pl-8 outline-primary-web-unifi-color-ublue-06 outline-1 w-72 text-sm"
+                className="bg-neutral-2 rounded flex-1 h-8 pl-8 outline-primary-web-unifi-color-ublue-06 outline-1 w-44 md:w-72 text-sm"
               />
               <Combobox.Options className="absolute w-full rounded-b-lg bg-neutral-web-unifi-color-neutral-00 shadow-popover py-2">
                 {suggestions.length === 0
