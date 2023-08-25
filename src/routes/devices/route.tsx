@@ -4,13 +4,14 @@ import cx from "classnames";
 import { matchSorter } from "match-sorter";
 import { useState } from "react";
 import { pipe, sortBy, uniqBy } from "remeda";
-import gridIcon from "../../assets/grid.svg";
-import listIcon from "../../assets/list.svg";
 import searchIcon from "../../assets/search.svg";
 import { Link } from "../../components/link";
+import { Button } from "../../components/ui/button";
 import { Checkbox } from "../../components/ui/checkbox";
 import { Container } from "../../components/ui/container";
 import { HStack } from "../../components/ui/hstack";
+import { IconGrid } from "../../components/ui/icons/grid";
+import { IconList } from "../../components/ui/icons/list";
 import { Spacer } from "../../components/ui/spacer";
 import { useUidb } from "../../hooks/use-uidb";
 import { uidbDeviceType } from "../../services/uidb";
@@ -102,7 +103,8 @@ export function Component() {
                             <div
                               className={cx(
                                 "text-sm text-text-web-unifi-text-2 px-2 rounded-sm cursor-pointer",
-                                active && "bg-u-blue-6-primary text-white"
+                                active &&
+                                  "bg-neutral-web-unifi-color-neutral-02 text-text-web-unifi-text-2"
                               )}
                             >
                               {parts.map((part) => {
@@ -134,17 +136,15 @@ export function Component() {
 
         <Spacer />
         <HStack className="space-x-2">
-          <button style={{ padding: "6px" }}>
-            <img src={listIcon} />
-          </button>
-          <button style={{ padding: "6px" }}>
-            <img src={gridIcon} />
-          </button>
+          <Button>
+            <IconList label="Show as list" />
+          </Button>
+          <Button>
+            <IconGrid label="Show as grid" />
+          </Button>
           <Popover.Root>
             <Popover.Trigger asChild>
-              <button className="data-[state=open]:text-primary-web-unifi-color-ublue-06 data-[state=open]:bg-neutral-web-unifi-color-neutral-01 text-sm text-text-text-3 p-1.5 hover:bg-neutral-web-unifi-color-neutral-02 rounded outline-0 border border-transparent focus:border-primary-web-unifi-color-ublue-06">
-                Filter
-              </button>
+              <Button>Filter</Button>
             </Popover.Trigger>
             <Popover.Portal>
               <Popover.Content
