@@ -83,9 +83,9 @@ export function Component() {
               <Combobox.Input
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Search..."
-                className="bg-neutral-2 rounded flex-1 h-8 pl-8 outline-primary-web-unifi-color-ublue-06 outline-1 w-72"
+                className="bg-neutral-2 rounded flex-1 h-8 pl-8 outline-primary-web-unifi-color-ublue-06 outline-1 w-72 text-sm"
               />
-              <Combobox.Options className="absolute w-full rounded-b-lg bg-neutral-web-unifi-color-neutral-00 shadow-popover p-4">
+              <Combobox.Options className="absolute w-full rounded-b-lg bg-neutral-web-unifi-color-neutral-00 shadow-popover py-4 px-2">
                 {suggestions.length === 0
                   ? "No suggestions."
                   : suggestions.map((device) => {
@@ -101,7 +101,7 @@ export function Component() {
                           {({ active }) => (
                             <div
                               className={cx(
-                                "text-sm text-text-web-unifi-text-2",
+                                "text-sm text-text-web-unifi-text-2 px-2 rounded-sm cursor-pointer",
                                 active && "bg-u-blue-6-primary text-white"
                               )}
                             >
@@ -142,7 +142,9 @@ export function Component() {
           </button>
           <Popover.Root>
             <Popover.Trigger asChild>
-              <button className="text-sm text-text-text-3">Filter</button>
+              <button className="data-[state=open]:text-primary-web-unifi-color-ublue-06 data-[state=open]:bg-neutral-web-unifi-color-neutral-01 text-sm text-text-text-3 p-1.5 hover:bg-neutral-web-unifi-color-neutral-02 rounded outline-0 border border-transparent focus:border-primary-web-unifi-color-ublue-06">
+                Filter
+              </button>
             </Popover.Trigger>
             <Popover.Portal>
               <Popover.Content

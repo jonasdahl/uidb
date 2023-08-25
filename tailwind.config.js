@@ -24,6 +24,7 @@ export default {
       "u-blue-6-primary": "#006FFF",
       white: "#ffffff",
       "text-web-unifi-text-2": "#50565E",
+      transparent: "transparent",
     },
     fontFamily: {
       sans: ["Graphik", "sans-serif"],
