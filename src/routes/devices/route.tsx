@@ -4,7 +4,6 @@ import cx from "classnames";
 import { matchSorter } from "match-sorter";
 import { useState } from "react";
 import { pipe, sortBy, uniqBy } from "remeda";
-import searchIcon from "../../assets/search.svg";
 import { Link } from "../../components/link";
 import { Button } from "../../components/ui/button";
 import { Checkbox } from "../../components/ui/checkbox";
@@ -12,6 +11,7 @@ import { Container } from "../../components/ui/container";
 import { HStack } from "../../components/ui/hstack";
 import { IconGrid } from "../../components/ui/icons/grid";
 import { IconList } from "../../components/ui/icons/list";
+import { IconSearch } from "../../components/ui/icons/search";
 import { Spacer } from "../../components/ui/spacer";
 import { useUidb } from "../../hooks/use-uidb";
 import { uidbDeviceType } from "../../services/uidb";
@@ -86,7 +86,7 @@ export function Component() {
                 placeholder="Search..."
                 className="bg-neutral-2 rounded flex-1 h-8 pl-8 outline-primary-web-unifi-color-ublue-06 outline-1 w-72 text-sm"
               />
-              <Combobox.Options className="absolute w-full rounded-b-lg bg-neutral-web-unifi-color-neutral-00 shadow-popover py-4 px-2">
+              <Combobox.Options className="absolute w-full rounded-b-lg bg-neutral-web-unifi-color-neutral-00 shadow-popover py-2">
                 {suggestions.length === 0
                   ? "No suggestions."
                   : suggestions.map((device) => {
@@ -102,9 +102,11 @@ export function Component() {
                           {({ active }) => (
                             <div
                               className={cx(
-                                "text-sm text-text-web-unifi-text-2 px-2 rounded-sm cursor-pointer",
-                                active &&
-                                  "bg-neutral-web-unifi-color-neutral-02 text-text-web-unifi-text-2"
+                                "text-sm text-text-web-unifi-text-2 px-2 py-1.5 rounded-sm cursor-pointer border border-solid -my-px",
+                                "hover:bg-neutral-web-unifi-color-neutral-02 hover:text-text-web-unifi-text-2",
+                                active
+                                  ? "border-primary-web-unifi-color-ublue-06"
+                                  : "border-transparent"
                               )}
                             >
                               {parts.map((part) => {
@@ -128,7 +130,7 @@ export function Component() {
               </Combobox.Options>
             </div>
           </Combobox>
-          <img src={searchIcon} className="absolute" />
+          <IconSearch label="Search..." className="absolute" />
           <div className="text-xs text-gray-4">
             {devices.length ?? 0} devices
           </div>

@@ -1,6 +1,6 @@
 import * as RadixCheckbox from "@radix-ui/react-checkbox";
 import { ReactNode, useId } from "react";
-import { ReactComponent as CheckIcon } from "../../assets/check.svg";
+import { IconCheck } from "./icons/check";
 
 export function Checkbox({
   children,
@@ -24,7 +24,7 @@ export function Checkbox({
         <div className="w-full h-full rounded border border-solid border-neutral-6" />
         <RadixCheckbox.Indicator>
           <div className="w-full h-full rounded bg-u-blue-6-primary flex items-center justify-items-center text-white -mt-4">
-            <CheckIcon />
+            <IconCheck label="Selected" />
           </div>
         </RadixCheckbox.Indicator>
       </RadixCheckbox.Root>
