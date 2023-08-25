@@ -75,6 +75,8 @@ export function Component() {
         keys: [(d) => d.product?.name ?? ""],
       }).slice(0, 10);
 
+  const [displayType, setDisplayType] = useState("list" as "list" | "grid");
+
   return (
     <Container>
       <HStack className="py-4">
@@ -138,12 +140,20 @@ export function Component() {
 
         <Spacer />
         <HStack className="space-x-2">
-          <Button>
-            <IconList label="Show as list" />
-          </Button>
-          <Button>
-            <IconGrid label="Show as grid" />
-          </Button>
+          <HStack>
+            <Button
+              isActive={displayType === "list"}
+              onClick={() => setDisplayType("list")}
+            >
+              <IconList label="Show as list" />
+            </Button>
+            <Button
+              isActive={displayType === "grid"}
+              onClick={() => setDisplayType("grid")}
+            >
+              <IconGrid label="Show as grid" />
+            </Button>
+          </HStack>
           <Popover.Root>
             <Popover.Trigger asChild>
               <Button>Filter</Button>
