@@ -88,7 +88,7 @@ export function Component() {
                 as={Input}
                 className="pl-8"
               />
-              <Combobox.Options className="absolute w-full rounded-b-lg bg-neutral-web-unifi-color-neutral-00 shadow-popover py-2">
+              <Combobox.Options className="absolute w-full rounded-b-lg bg-neutral-web-unifi-color-neutral-00 shadow-popover py-2 z-popover">
                 {suggestions.length === 0
                   ? "No suggestions."
                   : suggestions.map((device) => {

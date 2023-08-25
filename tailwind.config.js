@@ -26,6 +26,7 @@ export default {
       "text-web-unifi-text-2": "#50565E",
       transparent: "transparent",
       "text-text-1-light": "rgba(0, 0, 0, 0.85)",
+      "text-text-3-light": "rgba(0, 0, 0, 0.45)",
     },
     fontFamily: {
       sans: ["Graphik", "sans-serif"],
@@ -33,6 +34,9 @@ export default {
     },
     boxShadow: {
       popover: "0px 16px 32px 0px rgba(28, 30, 45, 0.20)",
+    },
+    zIndex: {
+      popover: 10,
     },
     extend: {},
   },
