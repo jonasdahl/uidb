@@ -216,7 +216,7 @@ export function Component() {
 function Grid({ devices }: { devices: UidbDevice[] }) {
   return (
     <>
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         {devices.map((device) => (
           <div
             key={device.id}
@@ -227,20 +227,33 @@ function Grid({ devices }: { devices: UidbDevice[] }) {
               className="bg-neutral-web-unifi-color-neutral-01 relative"
             >
               <div
-                className="absolute bg-neutral-web-unifi-color-neutral-00 px-1 py-0.5 text-primary-web-unifi-color-ublue-06 text-xs"
+                className="absolute bg-neutral-web-unifi-color-neutral-00 px-1 py-0.5 text-primary-web-unifi-color-ublue-06 text-xs flex"
                 style={{ top: "3px", right: "2.6667px" }}
               >
                 {device.line?.name}
               </div>
+              {device.icon ? (
+                <div className="p-2 flex flex-1 h-full">
+                  <img
+                    style={{
+                      flex: 1,
+                      objectFit: "scale-down",
+                      maxWidth: "100%",
+                      maxHeight: "100%",
+                    }}
+                    src={`https://static.ui.com/fingerprint/ui/icons/${device.icon.id}_${device.icon.resolutions?.[3]?.[0]}x${device.icon.resolutions?.[3]?.[1]}.png`}
+                  />
+                </div>
+              ) : null}
             </div>
             <div className="p-2">
               <div
                 style={{ height: "40px" }}
-                className="text-text-text-1-light text-sm"
+                className="text-text-text-1-light text-sm text-ellipsis whitespace-nowrap overflow-hidden"
               >
                 {device.product?.name}
               </div>
-              <div className="text-text-text-3 text-xs">
+              <div className="text-text-text-3 text-xs text-ellipsis whitespace-nowrap overflow-hidden">
                 {device.shortnames?.filter((s) => !!s).join(", ")}
               </div>
             </div>
