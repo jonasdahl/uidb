@@ -1,5 +1,6 @@
 import { Combobox } from "@headlessui/react";
 import * as Popover from "@radix-ui/react-popover";
+import cx from "classnames";
 import { matchSorter } from "match-sorter";
 import { useState } from "react";
 import { pipe, sortBy, uniqBy } from "remeda";
@@ -13,6 +14,40 @@ import { HStack } from "../../components/ui/hstack";
 import { Spacer } from "../../components/ui/spacer";
 import { useUidb } from "../../hooks/use-uidb";
 import { uidbDeviceType } from "../../services/uidb";
+
+/**
+ * Splits text into parts where each occurence of search is a separate part.
+ */
+function splitMatches(search: string, text: string) {
+  const parts: { content: string; match: boolean }[] = [];
+
+  let remaining = text.slice();
+
+  while (remaining.length > 0) {
+    const index = remaining
+      .toLocaleLowerCase()
+      .indexOf(search.toLocaleLowerCase());
+
+    if (index === -1) {
+      parts.push({ content: remaining, match: false });
+      break;
+    }
+
+    if (index > 0) {
+      // Avoid pushing empty strings if the search is at the start of the remaining text.
+      parts.push({ content: remaining.slice(0, index), match: false });
+    }
+    parts.push({
+      content: remaining.slice(index, index + search.length),
+      match: true,
+    });
+    remaining = remaining.slice(index + search.length);
+  }
+
+  console.log(search, text, parts);
+
+  return parts;
+}
 
 export function Component() {
   const { data } = useUidb();
@@ -34,17 +69,16 @@ export function Component() {
   const [query, setQuery] = useState("");
 
   const suggestions = !query
-    ? data?.devices ?? []
+    ? []
     : matchSorter(data?.devices ?? [], query, {
         keys: [(d) => d.product?.name ?? ""],
       }).slice(0, 10);
-  console.log(suggestions);
 
   return (
     <Container>
       <HStack className="py-4">
         <HStack className="space-x-2 relative">
-          <Combobox>
+          <Combobox nullable>
             <div className="relative">
               <Combobox.Input
                 onChange={(event) => setQuery(event.target.value)}
@@ -52,18 +86,43 @@ export function Component() {
                 className="bg-neutral-2 rounded flex-1 h-8 pl-8 outline-primary-web-unifi-color-ublue-06 outline-1 w-72"
               />
               <Combobox.Options className="absolute w-full rounded-b-lg bg-neutral-web-unifi-color-neutral-00 shadow-popover p-4">
-                {suggestions.map((device) => {
-                  return (
-                    <Combobox.Option
-                      key={device.id}
-                      value={device.product?.name}
-                    >
-                      <div className="text-sm text-text-web-unifi-text-2">
-                        {device.product?.name}
-                      </div>
-                    </Combobox.Option>
-                  );
-                })}
+                {suggestions.length === 0
+                  ? "No suggestions."
+                  : suggestions.map((device) => {
+                      const parts = splitMatches(
+                        query,
+                        device.product?.name ?? ""
+                      );
+                      return (
+                        <Combobox.Option
+                          key={device.id}
+                          value={device.product?.name}
+                        >
+                          {({ active }) => (
+                            <div
+                              className={cx(
+                                "text-sm text-text-web-unifi-text-2",
+                                active && "bg-u-blue-6-primary text-white"
+                              )}
+                            >
+                              {parts.map((part) => {
+                                return (
+                                  <span
+                                    className={
+                                      part.match
+                                        ? "font-bold underline"
+                                        : undefined
+                                    }
+                                  >
+                                    {part.content}
+                                  </span>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </Combobox.Option>
+                      );
+                    })}
               </Combobox.Options>
             </div>
           </Combobox>
