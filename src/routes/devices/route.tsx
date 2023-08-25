@@ -12,6 +12,7 @@ import { HStack } from "../../components/ui/hstack";
 import { IconGrid } from "../../components/ui/icons/grid";
 import { IconList } from "../../components/ui/icons/list";
 import { IconSearch } from "../../components/ui/icons/search";
+import { Input } from "../../components/ui/input";
 import { Spacer } from "../../components/ui/spacer";
 import { useUidb } from "../../hooks/use-uidb";
 import { UidbDevice, uidbDeviceType } from "../../services/uidb";
@@ -44,8 +45,6 @@ function splitMatches(search: string, text: string) {
     });
     remaining = remaining.slice(index + search.length);
   }
-
-  console.log(search, text, parts);
 
   return parts;
 }
@@ -86,7 +85,8 @@ export function Component() {
               <Combobox.Input
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Search..."
-                className="bg-neutral-2 rounded flex-1 h-8 pl-8 outline-primary-web-unifi-color-ublue-06 outline-1 w-44 md:w-72 text-sm"
+                as={Input}
+                className="pl-8"
               />
               <Combobox.Options className="absolute w-full rounded-b-lg bg-neutral-web-unifi-color-neutral-00 shadow-popover py-2">
                 {suggestions.length === 0
@@ -220,7 +220,7 @@ function Grid({ devices }: { devices: UidbDevice[] }) {
         {devices.map((device) => (
           <div
             key={device.id}
-            className="border border-solid border-neutral-neutral-03-light rounded-lg"
+            className="border border-solid border-neutral-neutral-03-light rounded-lg relative"
           >
             <div
               style={{ height: "100px" }}
@@ -251,7 +251,12 @@ function Grid({ devices }: { devices: UidbDevice[] }) {
                 style={{ height: "40px" }}
                 className="text-text-text-1-light text-sm text-ellipsis whitespace-nowrap overflow-hidden"
               >
-                {device.product?.name}
+                <Link
+                  to={`/devices/${device.id}`}
+                  className="before:content-[''] before:absolute before:left-0 before:top-0 before:w-full before:h-full"
+                >
+                  {device.product?.name}
+                </Link>
               </div>
               <div className="text-text-text-3 text-xs text-ellipsis whitespace-nowrap overflow-hidden">
                 {device.shortnames?.filter((s) => !!s).join(", ")}
