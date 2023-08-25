@@ -14,7 +14,7 @@ import { IconList } from "../../components/ui/icons/list";
 import { IconSearch } from "../../components/ui/icons/search";
 import { Spacer } from "../../components/ui/spacer";
 import { useUidb } from "../../hooks/use-uidb";
-import { uidbDeviceType } from "../../services/uidb";
+import { UidbDevice, uidbDeviceType } from "../../services/uidb";
 
 /**
  * Splits text into parts where each occurence of search is a separate part.
@@ -156,7 +156,7 @@ export function Component() {
           </HStack>
           <Popover.Root>
             <Popover.Trigger asChild>
-              <Button>Filter</Button>
+              <Button isActive={!!selectedLineIds.length}>Filter</Button>
             </Popover.Trigger>
             <Popover.Portal>
               <Popover.Content
@@ -204,6 +204,56 @@ export function Component() {
         </HStack>
       </HStack>
 
+      {displayType === "grid" ? (
+        <Grid devices={devices ?? []} />
+      ) : (
+        <List devices={devices ?? []} />
+      )}
+    </Container>
+  );
+}
+
+function Grid({ devices }: { devices: UidbDevice[] }) {
+  return (
+    <>
+      <div className="grid grid-cols-4 gap-4">
+        {devices.map((device) => (
+          <div
+            key={device.id}
+            className="border border-solid border-neutral-neutral-03-light rounded-lg"
+          >
+            <div
+              style={{ height: "100px" }}
+              className="bg-neutral-web-unifi-color-neutral-01 relative"
+            >
+              <div
+                className="absolute bg-neutral-web-unifi-color-neutral-00 px-1 py-0.5 text-primary-web-unifi-color-ublue-06 text-xs"
+                style={{ top: "3px", right: "2.6667px" }}
+              >
+                {device.line?.name}
+              </div>
+            </div>
+            <div className="p-2">
+              <div
+                style={{ height: "40px" }}
+                className="text-text-text-1-light text-sm"
+              >
+                {device.product?.name}
+              </div>
+              <div className="text-text-text-3 text-xs">
+                {device.shortnames?.filter((s) => !!s).join(", ")}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}
+
+function List({ devices }: { devices: UidbDevice[] }) {
+  return (
+    <>
       <table className="w-full">
         <thead>
           <tr className="border-b border-solid border-neutral-neutral-03-light">
@@ -249,6 +299,6 @@ export function Component() {
           })}
         </tbody>
       </table>
-    </Container>
+    </>
   );
 }

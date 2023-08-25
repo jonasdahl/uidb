@@ -25,6 +25,7 @@ export default {
       white: "#ffffff",
       "text-web-unifi-text-2": "#50565E",
       transparent: "transparent",
+      "text-text-1-light": "rgba(0, 0, 0, 0.85)",
     },
     fontFamily: {
       sans: ["Graphik", "sans-serif"],

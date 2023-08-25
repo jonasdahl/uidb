@@ -23,6 +23,7 @@ export const uidbDeviceType = z.object({
     })
     .optional()
     .nullable(),
+  shortnames: z.array(z.string().optional().nullable()).optional().nullable(),
 });
 
 const uidbAbstractType = z.object({
@@ -38,3 +39,5 @@ export async function getUidb() {
   const parsed = uidbAbstractType.parse(data);
   return parsed;
 }
+
+export type UidbDevice = z.infer<typeof uidbDeviceType>;
