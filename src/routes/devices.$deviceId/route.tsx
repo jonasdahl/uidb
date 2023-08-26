@@ -1,4 +1,5 @@
-import { ReactNode } from "react";
+import cx from "classnames";
+import { ComponentProps, ReactNode } from "react";
 import { LoaderFunctionArgs, useLoaderData } from "react-router-dom";
 import { z } from "zod";
 import { Container } from "../../components/ui/container";
@@ -72,7 +73,28 @@ export function Component() {
           />
         </div>
       </div>
+
+      <div className="flex flex-col items-center">
+        <CTA>See All Details as JSON</CTA>
+      </div>
     </Container>
+  );
+}
+
+function CTA(props: ComponentProps<"button">) {
+  return (
+    <button
+      {...props}
+      className={cx(
+        "text-primary-web-unifi-color-ublue-06 text-sm",
+        "hover:text-primary-web-unifi-color-ublue-07",
+        "border border-transparent outline-none",
+        "py-1.5 px-0.5",
+        "rounded",
+        "focus:border-primary-web-unifi-color-ublue-06",
+        props.className
+      )}
+    />
   );
 }
 
