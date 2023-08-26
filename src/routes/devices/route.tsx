@@ -95,7 +95,9 @@ export function Component() {
               />
               <Combobox.Options className="absolute w-full rounded-b-lg bg-neutral-web-unifi-color-neutral-00 shadow-popover py-2 z-popover">
                 {suggestions.length === 0 ? (
-                  <div className="px-2 text-sm">No suggestions.</div>
+                  <div className="px-2 py-1.5 text-sm border border-solid border-transparent">
+                    No suggestions. Try another search.
+                  </div>
                 ) : (
                   suggestions.map((device) => {
                     const parts = splitMatches(
