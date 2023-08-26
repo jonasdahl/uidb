@@ -1,6 +1,6 @@
 import { ReactComponent as Logo } from "../../assets/logo.svg";
 import { Link } from "../link";
-import { HStack } from "../ui/hstack";
+import { HStack } from "../ui/h-stack";
 import { Spacer } from "../ui/spacer";
 
 export function TopBar() {

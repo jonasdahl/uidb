@@ -1,5 +1,4 @@
 import { Combobox } from "@headlessui/react";
-import * as Popover from "@radix-ui/react-popover";
 import cx from "classnames";
 import { matchSorter } from "match-sorter";
 import { useState } from "react";
@@ -8,11 +7,16 @@ import { Link } from "../../components/link";
 import { Button } from "../../components/ui/button";
 import { Checkbox } from "../../components/ui/checkbox";
 import { Container } from "../../components/ui/container";
-import { HStack } from "../../components/ui/hstack";
+import { HStack } from "../../components/ui/h-stack";
 import { IconGrid } from "../../components/ui/icons/grid";
 import { IconList } from "../../components/ui/icons/list";
 import { IconSearch } from "../../components/ui/icons/search";
 import { Input } from "../../components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "../../components/ui/popover";
 import { Spacer } from "../../components/ui/spacer";
 import { useUidb } from "../../hooks/use-uidb";
 import { UidbDevice, uidbDeviceType } from "../../services/uidb";
@@ -80,8 +84,8 @@ export function Component() {
     <Container>
       <HStack className="py-4">
         <HStack className="space-x-2 relative">
-          <Combobox nullable>
-            <div className="relative">
+          <div className="relative">
+            <Combobox nullable>
               <Combobox.Input
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Search..."
@@ -133,8 +137,8 @@ export function Component() {
                   })
                 )}
               </Combobox.Options>
-            </div>
-          </Combobox>
+            </Combobox>
+          </div>
           <IconSearch label="Search..." className="absolute" />
           <div className="text-xs text-gray-4">
             {devices.length ?? 0} devices
@@ -150,6 +154,7 @@ export function Component() {
             >
               <IconList label="Show as list" />
             </Button>
+
             <Button
               isActive={displayType === "grid"}
               onClick={() => setDisplayType("grid")}
@@ -157,53 +162,51 @@ export function Component() {
               <IconGrid label="Show as grid" />
             </Button>
           </HStack>
-          <Popover.Root>
-            <Popover.Trigger asChild>
+
+          <Popover>
+            <PopoverTrigger>
               <Button isActive={!!selectedLineIds.length}>Filter</Button>
-            </Popover.Trigger>
-            <Popover.Portal>
-              <Popover.Content
-                align="start"
-                className="rounded-lg bg-neutral-web-unifi-color-neutral-00 shadow-popover space-y-4 py-4"
-              >
-                <h4 className="text-sm font-bold px-4">Product line</h4>
-                <div className="space-y-2 max-h-60 overflow-auto px-4">
-                  {productLines.map((line) => {
-                    const lineId = line?.id;
-                    if (!lineId) {
-                      return null;
-                    }
-                    const isChecked = selectedLineIds.some(
-                      (id) => id === lineId
-                    );
-                    return (
-                      <Checkbox
-                        key={line.id}
-                        checked={isChecked}
-                        onChange={() =>
-                          setSelectedLineIds((previouslySelected) =>
-                            previouslySelected.some((id) => id === lineId)
-                              ? previouslySelected.filter((id) => id !== lineId)
-                              : [...previouslySelected, lineId]
-                          )
-                        }
-                      >
-                        {line?.name}
-                      </Checkbox>
-                    );
-                  })}
-                </div>
-                <div className="px-4">
-                  <button
-                    className="text-semantic-destructive-web-unifi-color-red-06 text-sm"
-                    onClick={() => setSelectedLineIds([])}
-                  >
-                    Reset
-                  </button>
-                </div>
-              </Popover.Content>
-            </Popover.Portal>
-          </Popover.Root>
+            </PopoverTrigger>
+            <PopoverContent title="Product line">
+              <div className="space-y-2 max-h-60 overflow-auto px-4 py-0.5">
+                {productLines.map((line) => {
+                  const lineId = line?.id;
+                  if (!lineId) {
+                    return null;
+                  }
+                  const isChecked = selectedLineIds.some((id) => id === lineId);
+                  return (
+                    <Checkbox
+                      key={line.id}
+                      checked={isChecked}
+                      onChange={() =>
+                        setSelectedLineIds((previouslySelected) =>
+                          previouslySelected.some((id) => id === lineId)
+                            ? previouslySelected.filter((id) => id !== lineId)
+                            : [...previouslySelected, lineId]
+                        )
+                      }
+                    >
+                      {line?.name}
+                    </Checkbox>
+                  );
+                })}
+              </div>
+              <div className="px-4">
+                <button
+                  className={cx(
+                    "text-sm",
+                    selectedLineIds.length === 0
+                      ? "text-semantic-destructive-web-unifi-color-red-03"
+                      : "text-semantic-destructive-web-unifi-color-red-06"
+                  )}
+                  onClick={() => setSelectedLineIds([])}
+                >
+                  Reset
+                </button>
+              </div>
+            </PopoverContent>
+          </Popover>
         </HStack>
       </HStack>
 
