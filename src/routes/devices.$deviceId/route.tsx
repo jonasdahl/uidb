@@ -5,6 +5,7 @@ import { z } from "zod";
 import { Link } from "../../components/link";
 import { Container } from "../../components/ui/container";
 import { IconChevronLeft } from "../../components/ui/icons/chevron-left";
+import { IconChevronRight } from "../../components/ui/icons/chevron-right";
 import { Spacer } from "../../components/ui/spacer";
 import { getUidb, uidbDeviceType } from "../../services/uidb";
 
@@ -37,18 +38,17 @@ export function Component() {
   return (
     <div>
       <div className="py-0.5">
-        <div className="px-8 py-4 flex flex-row">
-          <Link
+        <div className="px-8 py-4 flex flex-row gap-1">
+          <NavLink
             to="/"
-            className="bg-neutral-web-unifi-color-neutral-00 shadow-low-light text-text-text-3 p-1 text-sm flex flex-row rounded"
-          >
-            <span style={{ display: "inline-block", padding: "4px 7px" }}>
-              <IconChevronLeft label="Go back" />
-            </span>
-            <span>Back</span>
-          </Link>
+            icon={<IconChevronLeft label="Go back" />}
+            label="Back"
+          />
 
           <Spacer />
+
+          <NavLink to="" icon={<IconChevronLeft label="Previous" />} />
+          <NavLink to="" icon={<IconChevronRight label="Next" />} />
         </div>
       </div>
       <Container style={{ maxWidth: "768px" }}>
@@ -98,6 +98,30 @@ export function Component() {
         </div>
       </Container>
     </div>
+  );
+}
+
+function NavLink({
+  icon,
+  label,
+  to,
+}: {
+  icon?: ReactNode;
+  label?: ReactNode;
+  to: string;
+}) {
+  return (
+    <Link
+      to={to}
+      className="bg-neutral-web-unifi-color-neutral-00 shadow-low-light text-text-text-3 p-1 text-sm flex flex-row rounded"
+    >
+      {icon ? (
+        <span style={{ display: "inline-block", padding: "4px 7px" }}>
+          {icon}
+        </span>
+      ) : null}
+      {label ? <span>{label}</span> : null}
+    </Link>
   );
 }
 
