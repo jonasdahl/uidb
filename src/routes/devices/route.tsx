@@ -85,50 +85,53 @@ export function Component() {
               <Combobox.Input
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Search..."
+                autoComplete="off"
                 as={Input}
                 className="pl-8"
               />
               <Combobox.Options className="absolute w-full rounded-b-lg bg-neutral-web-unifi-color-neutral-00 shadow-popover py-2 z-popover">
-                {suggestions.length === 0
-                  ? "No suggestions."
-                  : suggestions.map((device) => {
-                      const parts = splitMatches(
-                        query,
-                        device.product?.name ?? ""
-                      );
-                      return (
-                        <Combobox.Option
-                          key={device.id}
-                          value={device.product?.name}
-                        >
-                          {({ active }) => (
-                            <div
-                              className={cx(
-                                "text-sm text-text-web-unifi-text-2 px-2 py-1.5 rounded-sm cursor-pointer border border-solid -my-px",
-                                "hover:bg-neutral-web-unifi-color-neutral-02 hover:text-text-web-unifi-text-2",
-                                active
-                                  ? "border-primary-web-unifi-color-ublue-06"
-                                  : "border-transparent"
-                              )}
-                            >
-                              {parts.map((part) => {
-                                return (
-                                  <span
-                                    className={
-                                      part.match
-                                        ? "font-bold underline"
-                                        : undefined
-                                    }
-                                  >
-                                    {part.content}
-                                  </span>
-                                );
-                              })}
-                            </div>
-                          )}
-                        </Combobox.Option>
-                      );
-                    })}
+                {suggestions.length === 0 ? (
+                  <div className="px-2 text-sm">No suggestions.</div>
+                ) : (
+                  suggestions.map((device) => {
+                    const parts = splitMatches(
+                      query,
+                      device.product?.name ?? ""
+                    );
+                    return (
+                      <Combobox.Option
+                        key={device.id}
+                        value={device.product?.name}
+                      >
+                        {({ selected, active }) => (
+                          <div
+                            className={cx(
+                              "text-sm text-text-web-unifi-text-2 px-2 py-1.5 rounded-sm cursor-pointer border border-solid",
+                              "hover:bg-neutral-web-unifi-color-neutral-02 hover:text-text-web-unifi-text-2",
+                              selected || active
+                                ? "border-primary-web-unifi-color-ublue-06"
+                                : "border-transparent"
+                            )}
+                          >
+                            {parts.map((part) => {
+                              return (
+                                <span
+                                  className={
+                                    part.match
+                                      ? "font-bold underline"
+                                      : undefined
+                                  }
+                                >
+                                  {part.content}
+                                </span>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </Combobox.Option>
+                    );
+                  })
+                )}
               </Combobox.Options>
             </div>
           </Combobox>

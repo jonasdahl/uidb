@@ -28,6 +28,7 @@ export default {
       "text-text-1-light": "rgba(0, 0, 0, 0.85)",
       "text-text-3-light": "rgba(0, 0, 0, 0.45)",
       "primary-web-unifi-color-ublue-07": "#0059CC",
+      "neutral-neutral-08-light": "#838691",
     },
     fontFamily: {
       sans: ["Graphik", "sans-serif"],

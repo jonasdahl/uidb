@@ -11,13 +11,14 @@ import { getUidb, uidbDeviceType } from "../../services/uidb";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const uidb = await getUidb();
-  const device = uidb?.devices.find((d) => {
+  const deviceIndex = uidb?.devices.findIndex((d) => {
     const parsed = z.object({ id: z.string() }).safeParse(d);
     if (!parsed.success) {
       return false;
     }
     return parsed.data.id === params.deviceId;
   });
+  const device = uidb?.devices[deviceIndex];
 
   if (!device) {
     throw new Response("Not found", { status: 404 });
@@ -29,11 +30,16 @@ export async function loader({ params }: LoaderFunctionArgs) {
     throw new Response("Failed to load device data", { status: 500 });
   }
 
-  return { device: parsed.data };
+  const nextDeviceId = uidb?.devices[deviceIndex + 1]?.id;
+  const previousDeviceId = uidb?.devices[deviceIndex - 1]?.id;
+
+  return { device: parsed.data, previousDeviceId, nextDeviceId };
 }
 
 export function Component() {
-  const { device } = useLoaderData() as Awaited<ReturnType<typeof loader>>;
+  const { device, nextDeviceId, previousDeviceId } = useLoaderData() as Awaited<
+    ReturnType<typeof loader>
+  >;
 
   return (
     <div>
@@ -47,8 +53,18 @@ export function Component() {
 
           <Spacer />
 
-          <NavLink to="" icon={<IconChevronLeft label="Previous" />} />
-          <NavLink to="" icon={<IconChevronRight label="Next" />} />
+          {previousDeviceId ? (
+            <NavLink
+              to={`/devices/${previousDeviceId}`}
+              icon={<IconChevronLeft label="Previous" />}
+            />
+          ) : null}
+          {nextDeviceId ? (
+            <NavLink
+              to={`/devices/${nextDeviceId}`}
+              icon={<IconChevronRight label="Next" />}
+            />
+          ) : null}
         </div>
       </div>
       <Container style={{ maxWidth: "768px" }}>
@@ -116,7 +132,10 @@ function NavLink({
       className="bg-neutral-web-unifi-color-neutral-00 shadow-low-light text-text-text-3 p-1 text-sm flex flex-row rounded"
     >
       {icon ? (
-        <span style={{ display: "inline-block", padding: "4px 7px" }}>
+        <span
+          style={{ display: "inline-block", padding: "4px 7px" }}
+          className="text-neutral-neutral-08-light"
+        >
           {icon}
         </span>
       ) : null}
