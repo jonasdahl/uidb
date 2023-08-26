@@ -35,6 +35,8 @@ export default {
     },
     boxShadow: {
       popover: "0px 16px 32px 0px rgba(28, 30, 45, 0.20)",
+      "low-light":
+        "0px 8px 24px 0px rgba(0, 0, 0, 0.08), 0px 0px 1px 0px rgba(0, 0, 0, 0.06)",
     },
     zIndex: {
       popover: 10,
