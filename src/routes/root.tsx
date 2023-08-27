@@ -1,14 +1,13 @@
 import { Outlet } from "react-router-dom";
 import { TopBar } from "../components/top-bar";
-import { Stack } from "../components/ui/stack";
 
 export function Component() {
   return (
-    <Stack>
+    <div className="h-full flex flex-col">
       <TopBar />
-      <div>
+      <div className="flex-1 overflow-auto">
         <Outlet />
       </div>
-    </Stack>
+    </div>
   );
 }

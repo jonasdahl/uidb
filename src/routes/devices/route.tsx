@@ -279,7 +279,7 @@ function Grid({ devices }: { devices: UidbDevice[] }) {
 
 function List({ devices }: { devices: UidbDevice[] }) {
   return (
-    <>
+    <div className="overflow-auto flex-1">
       <table className="w-full">
         <thead>
           <tr className="border-b border-solid border-neutral-neutral-03-light">
@@ -325,6 +325,6 @@ function List({ devices }: { devices: UidbDevice[] }) {
           })}
         </tbody>
       </table>
-    </>
+    </div>
   );
 }
