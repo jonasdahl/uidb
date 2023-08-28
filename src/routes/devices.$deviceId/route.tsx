@@ -59,13 +59,13 @@ export function Component() {
 
           {previousDeviceId ? (
             <NavLink
-              to={`/devices/${previousDeviceId}`}
+              to={`/devices/${previousDeviceId}?returnTo=${backUrl}`}
               icon={<IconChevronLeft label="Previous" />}
             />
           ) : null}
           {nextDeviceId ? (
             <NavLink
-              to={`/devices/${nextDeviceId}`}
+              to={`/devices/${nextDeviceId}?returnTo=${backUrl}`}
               icon={<IconChevronRight label="Next" />}
             />
           ) : null}

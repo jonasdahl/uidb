@@ -2,6 +2,9 @@ import { ComponentProps, ReactNode } from "react";
 import { sortBy } from "remeda";
 import { UidbDevice } from "../../services/uidb";
 
+/**
+ * An icon of the product that is at lease minWidth wide and minHeight tall.
+ */
 export function ProductIcon({
   icon,
   minWidth,

@@ -6,5 +6,5 @@ export const Spacer = forwardRef<HTMLDivElement, Props>(function Spacer(
   props,
   ref
 ) {
-  return <div {...props} style={{ flex: 1 }} ref={ref} />;
+  return <div {...props} className="flex-grow min-w-4" ref={ref} />;
 });

@@ -9,7 +9,7 @@ export function List({ devices }: { devices: UidbDevice[] }) {
       <Thead>
         <Tr>
           <Th />
-          <Th>Product Line</Th>
+          <Th className="whitespace-nowrap">Product Line</Th>
           <Th>Name</Th>
         </Tr>
       </Thead>

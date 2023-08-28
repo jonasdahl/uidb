@@ -1,10 +1,11 @@
 import { Combobox } from "@headlessui/react";
 import cx from "classnames";
 import { matchSorter } from "match-sorter";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   LoaderFunctionArgs,
   useLoaderData,
+  useNavigate,
   useSearchParams,
 } from "react-router-dom";
 import { pipe, sortBy, uniqBy } from "remeda";
@@ -24,6 +25,7 @@ import {
 } from "../../components/ui/popover";
 import { Spacer } from "../../components/ui/spacer";
 import { UidbDevice, getUidb } from "../../services/uidb";
+import { useCurrentReturnToUrl } from "../../utils/return-to";
 import { splitString } from "../../utils/split-string";
 import { Grid } from "./grid";
 import { List } from "./list";
@@ -99,9 +101,9 @@ export function Component() {
     <div className="flex flex-col h-full">
       <Container>
         <HStack className="py-4">
-          <HStack className="space-x-2">
+          <HStack className="space-x-2 overflow-hidden">
             <SearchField devices={devices} />
-            <div className="text-xs text-gray-4">
+            <div className="text-xs text-gray-4 whitespace-nowrap overflow-hidden text-ellipsis">
               {totalDevices !== showingDevices
                 ? `Showing ${showingDevices.toLocaleString()} of ${totalDevices.toLocaleString()} devices`
                 : `${totalDevices.toLocaleString()} devices`}
@@ -213,18 +215,31 @@ function ProductLineFilter({
 }
 
 function SearchField({ devices }: { devices: UidbDevice[] }) {
+  const returnTo = useCurrentReturnToUrl();
+  const navigate = useNavigate();
   const [query, setQuery] = useState("");
 
-  const suggestions = !query
-    ? []
-    : matchSorter(devices, query, {
-        keys: [(d) => d.product?.name ?? ""],
-      }).slice(0, 10);
+  const suggestions = useMemo(() => {
+    if (!query) {
+      return [];
+    }
+    const matches = matchSorter(devices, query, {
+      keys: [(d) => d.product?.name ?? "", (d) => d.line?.name ?? ""],
+    });
+    return matches.slice(0, 10);
+  }, [devices, query]);
 
   return (
     <HStack className="space-x-2 relative">
       <div className="relative">
-        <Combobox nullable>
+        <Combobox
+          nullable
+          onChange={(deviceId) => {
+            if (deviceId) {
+              navigate(`/devices/${deviceId}?returnTo=${returnTo}`);
+            }
+          }}
+        >
           <Combobox.Input
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search..."
@@ -241,7 +256,7 @@ function SearchField({ devices }: { devices: UidbDevice[] }) {
               suggestions.map((device) => {
                 const parts = splitString(query, device.product?.name ?? "");
                 return (
-                  <Combobox.Option key={device.id} value={device.product?.name}>
+                  <Combobox.Option key={device.id} value={device.id}>
                     {({ selected, active }) => (
                       <div
                         className={cx(
@@ -252,9 +267,10 @@ function SearchField({ devices }: { devices: UidbDevice[] }) {
                             : "border-transparent"
                         )}
                       >
-                        {parts.map((part) => {
+                        {parts.map((part, i) => {
                           return (
                             <span
+                              key={i}
                               className={
                                 part.match ? "font-bold underline" : undefined
                               }
