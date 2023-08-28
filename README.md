@@ -1,4 +1,4 @@
-# Ubiquiti UIDB Visualizer
+# UIDB Visualizer
 
 The latest `main` branch code is automatically deployed to [ancient-brook-2300.fly.dev](https://ancient-brook-2300.fly.dev). The app is a single page application (SPA) but might transition into a server rendered app later on.
 
