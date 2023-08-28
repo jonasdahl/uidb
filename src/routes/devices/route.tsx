@@ -4,6 +4,7 @@ import { matchSorter } from "match-sorter";
 import { useState } from "react";
 import { pipe, sortBy, uniqBy } from "remeda";
 import { Link } from "../../components/link";
+import { ProductIcon } from "../../components/product-icon";
 import { Button } from "../../components/ui/button";
 import { Checkbox } from "../../components/ui/checkbox";
 import { Container } from "../../components/ui/container";
@@ -311,12 +312,13 @@ function List({ devices }: { devices: UidbDevice[] }) {
         {devices?.map((device) => (
           <Tr key={device.id}>
             <Td className="p-1.5 align-middle w-8">
-              {device.icon ? (
-                <img
-                  className="h-5 w-5 inline-block"
-                  src={`https://static.ui.com/fingerprint/ui/icons/${device.icon.id}_${device.icon.resolutions?.[0]?.[0]}x${device.icon.resolutions?.[0]?.[1]}.png`}
-                />
-              ) : null}
+              <ProductIcon
+                icon={device.icon}
+                minHeight={20}
+                minWidth={20}
+                fallback={null}
+                className="h-5 w-5 inline-block"
+              />
             </Td>
             <Td className="px-2 py-0.5">
               <Link to={`/devices/${device.id}`}>{device.line?.name}</Link>

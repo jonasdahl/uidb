@@ -3,6 +3,7 @@ import { ComponentProps, ReactNode } from "react";
 import { LoaderFunctionArgs, useLoaderData } from "react-router-dom";
 import { z } from "zod";
 import { Link } from "../../components/link";
+import { ProductIcon } from "../../components/product-icon";
 import { Container } from "../../components/ui/container";
 import { IconChevronLeft } from "../../components/ui/icons/chevron-left";
 import { IconChevronRight } from "../../components/ui/icons/chevron-right";
@@ -75,18 +76,11 @@ export function Component() {
           <div className="bg-neutral-web-unifi-color-neutral-01 rounded-lg flex items-center flex-col p-4">
             {device.icon ? (
               <div className="w-64 h-64 flex">
-                <img
-                  src={`https://static.ui.com/fingerprint/ui/icons/${
-                    device.icon.id
-                  }_${
-                    device.icon.resolutions?.[
-                      device.icon.resolutions.length - 1
-                    ]?.[0]
-                  }x${
-                    device.icon.resolutions?.[
-                      device.icon.resolutions.length - 1
-                    ]?.[1]
-                  }.png`}
+                <ProductIcon
+                  icon={device.icon}
+                  fallback={null}
+                  minWidth={256}
+                  minHeight={256}
                   className="flex-1 object-scale-down max-w-full max-h-full"
                 />
               </div>
