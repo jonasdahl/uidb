@@ -1,16 +1,21 @@
 import cx from "classnames";
-import { ComponentProps, ReactNode } from "react";
+import { ComponentProps, ReactNode, useState } from "react";
 import { LoaderFunctionArgs, useLoaderData } from "react-router-dom";
 import { z } from "zod";
 import { Link } from "../../components/link";
 import { ProductIcon } from "../../components/product-icon";
+import { Code } from "../../components/ui/code";
 import { Container } from "../../components/ui/container";
 import { IconChevronLeft } from "../../components/ui/icons/chevron-left";
 import { IconChevronRight } from "../../components/ui/icons/chevron-right";
 import { Spacer } from "../../components/ui/spacer";
-import { getUidb, uidbDeviceType } from "../../services/uidb";
 import { useReturnToUrl } from "../../utils/return-to";
+import { getUidb } from "../../utils/uidb";
 
+// React router will run this every page load/client side navigation.
+// This loads uidb and parses some data from the URL that we need.
+// In the future, this should be able to run on the server instead,
+// with something like Remix or Next.js.
 export async function loader({ params }: LoaderFunctionArgs) {
   const uidb = await getUidb();
   const deviceIndex = uidb?.devices.findIndex((d) => {
@@ -26,22 +31,18 @@ export async function loader({ params }: LoaderFunctionArgs) {
     throw new Response("Not found", { status: 404 });
   }
 
-  const parsed = uidbDeviceType.safeParse(device);
-
-  if (!parsed.success) {
-    throw new Response("Failed to load device data", { status: 500 });
-  }
-
   const nextDeviceId = uidb?.devices[deviceIndex + 1]?.id;
   const previousDeviceId = uidb?.devices[deviceIndex - 1]?.id;
 
-  return { device: parsed.data, previousDeviceId, nextDeviceId };
+  return { device, previousDeviceId, nextDeviceId };
 }
 
 export function Component() {
   const { device, nextDeviceId, previousDeviceId } = useLoaderData() as Awaited<
     ReturnType<typeof loader>
   >;
+
+  const [showAllDetails, setShowAllDetails] = useState(false);
 
   const backUrl = useReturnToUrl();
 
@@ -71,7 +72,7 @@ export function Component() {
           ) : null}
         </div>
       </div>
-      <Container style={{ maxWidth: "768px" }}>
+      <Container style={{ maxWidth: "768px" }} className="pb-10">
         <div
           className="grid grid-cols-1 md:grid-cols-2 gap-8 px-8 pb-8"
           style={{ gridTemplateColumns: "auto 1fr" }}
@@ -107,8 +108,12 @@ export function Component() {
         </div>
 
         <div className="flex flex-col items-center">
-          <CTA>See All Details as JSON</CTA>
+          <CTA onClick={() => setShowAllDetails((old) => !old)}>
+            See All Details as JSON
+          </CTA>
         </div>
+
+        {showAllDetails ? <Code>{JSON.stringify(device, null, 2)}</Code> : null}
       </Container>
     </div>
   );

@@ -1,8 +1,8 @@
 import { Link } from "../../components/link";
 import { ProductGrid, ProductGridItem } from "../../components/product-grid";
 import { ProductIcon } from "../../components/product-icon";
-import { UidbDevice } from "../../services/uidb";
 import { useCurrentReturnToUrl } from "../../utils/return-to";
+import { UidbDevice } from "../../utils/uidb";
 
 export function Grid({ devices }: { devices: UidbDevice[] }) {
   const returnTo = useCurrentReturnToUrl();

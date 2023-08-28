@@ -3,6 +3,9 @@ import { Link } from "../components/link";
 import { TopBar } from "../components/top-bar";
 import { Stack } from "../components/ui/stack";
 
+/**
+ * The root layout for the app. It will render the top bar and the current route.
+ */
 export function Component() {
   return (
     <div className="h-full flex flex-col">
@@ -14,6 +17,11 @@ export function Component() {
   );
 }
 
+/**
+ * When anything in the app throws or errors, this will render instead.
+ * Please add more specific error boundaries closer to the route that is
+ * throwing the error.
+ */
 export function ErrorBoundary() {
   return (
     <div className="h-full flex flex-col">

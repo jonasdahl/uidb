@@ -1,7 +1,7 @@
 import { Link } from "../../components/link";
 import { ProductIcon } from "../../components/product-icon";
 import { Table, Tbody, Td, Th, Thead, Tr } from "../../components/ui/table";
-import { UidbDevice } from "../../services/uidb";
+import { UidbDevice } from "../../utils/uidb";
 
 export function List({ devices }: { devices: UidbDevice[] }) {
   return (

@@ -28,9 +28,9 @@ import {
   PopoverTrigger,
 } from "../../components/ui/popover";
 import { Spacer } from "../../components/ui/spacer";
-import { UidbDevice, getUidb } from "../../services/uidb";
 import { useCurrentReturnToUrl } from "../../utils/return-to";
 import { splitString } from "../../utils/split-string";
+import { UidbDevice, getUidb } from "../../utils/uidb";
 import { Grid } from "./grid";
 import { List } from "./list";
 
@@ -38,6 +38,10 @@ const displayTypeSchema = z
   .union([z.literal("list"), z.literal("grid")])
   .optional();
 
+// React router will run this loader function on every page load/navigation.
+// This loads uidb and parses some data from the URL that we need.
+// In the future, this should be able to run on the server instead,
+// with something like Remix or Next.js.
 export async function loader({ request }: LoaderFunctionArgs) {
   const uidb = await getUidb();
   const url = new URL(request.url);
@@ -105,9 +109,9 @@ export function Component() {
     <div className="flex flex-col h-full">
       <Container>
         <HStack className="py-4">
-          <HStack className="space-x-2 overflow-hidden">
+          <HStack className="space-x-2">
             <SearchField devices={devices} />
-            <div className="text-xs text-gray-4 whitespace-nowrap overflow-hidden text-ellipsis">
+            <div className="text-xs text-gray-4 whitespace-nowrap overflow-hidden text-ellipsis flex-shrink hidden sm:block">
               {totalDevices !== showingDevices
                 ? `Showing ${showingDevices.toLocaleString()} of ${totalDevices.toLocaleString()} devices`
                 : `${totalDevices.toLocaleString()} devices`}

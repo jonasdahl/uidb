@@ -1,6 +1,6 @@
 import { ComponentProps, ReactNode } from "react";
 import { sortBy } from "remeda";
-import { UidbDevice } from "../../services/uidb";
+import { UidbDevice } from "../../utils/uidb";
 
 /**
  * An icon of the product that is at lease minWidth wide and minHeight tall.
@@ -21,7 +21,7 @@ export function ProductIcon({
     return fallback ?? null;
   }
   // Sort resolutions smallest first so we can iterate and find the first one that fits our requirements
-  const resolutions = sortBy(icon.resolutions, (res) => res[0] + res[1]);
+  const resolutions = sortBy(icon.resolutions, (res) => res[0] * res[1]);
   const resolution =
     resolutions.find((res) => res[0] >= minWidth && res[1] >= minHeight) ??
     resolutions[resolutions.length - 1]; // Fall back to the largest resolution if no match was found

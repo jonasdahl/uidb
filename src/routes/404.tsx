@@ -1,6 +1,9 @@
 import { Link } from "../components/link";
 import { Stack } from "../components/ui/stack";
 
+/**
+ * The page that renders when a route is not found. It will render inside the root layout.
+ */
 export function Component() {
   return (
     <Stack className="text-center space-y-6 py-20">
