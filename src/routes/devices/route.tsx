@@ -1,10 +1,9 @@
 import { Combobox } from "@headlessui/react";
 import cx from "classnames";
 import { matchSorter } from "match-sorter";
-import { ReactNode, useState } from "react";
+import { useState } from "react";
+import { useLoaderData } from "react-router-dom";
 import { pipe, sortBy, uniqBy } from "remeda";
-import { Link } from "../../components/link";
-import { ProductIcon } from "../../components/product-icon";
 import { Button } from "../../components/ui/button";
 import { Checkbox } from "../../components/ui/checkbox";
 import { Container } from "../../components/ui/container";
@@ -19,30 +18,47 @@ import {
   PopoverTrigger,
 } from "../../components/ui/popover";
 import { Spacer } from "../../components/ui/spacer";
-import { Table, Tbody, Td, Th, Thead, Tr } from "../../components/ui/table";
-import { useUidb } from "../../hooks/use-uidb";
-import { UidbDevice } from "../../services/uidb";
+import { UidbDevice, getUidb } from "../../services/uidb";
 import { splitString } from "../../utils/split-string";
+import { Grid } from "./grid";
+import { List } from "./list";
+
+export async function loader() {
+  const uidb = await getUidb();
+  return { uidb };
+}
 
 export function Component() {
-  const { data } = useUidb();
-  const [selectedLineIds, setSelectedLineIds] = useState<string[]>([]);
+  const { uidb } = useLoaderData() as Awaited<ReturnType<typeof loader>>;
+
+  const [selectedProductLineIds, setSelectedProductLineIds] = useState(
+    [] as string[]
+  );
 
   const devices =
-    data?.devices.filter((device) => {
-      if (selectedLineIds.length === 0) {
+    uidb.devices.filter((device) => {
+      if (selectedProductLineIds.length === 0) {
         return true;
       }
-      return selectedLineIds.includes(device.line?.id ?? "");
+      return selectedProductLineIds.includes(device.line?.id ?? "");
     }) ?? [];
-  // const totalDevices = data?.devices.length ?? 0;
+
+  const totalDevices = uidb?.devices.length ?? 0;
+  const showingDevices = devices?.length ?? 0;
 
   const [displayType, setDisplayType] = useState("list" as "list" | "grid");
 
   return (
     <Container className="h-full flex flex-col pb-4">
       <HStack className="py-4">
-        <SearchField devices={data?.devices ?? []} />
+        <HStack className="space-x-2">
+          <SearchField devices={devices} />
+          <div className="text-xs text-gray-4">
+            {totalDevices !== showingDevices
+              ? `Showing ${showingDevices.toLocaleString()} of ${totalDevices.toLocaleString()} devices`
+              : `${totalDevices.toLocaleString()} devices`}
+          </div>
+        </HStack>
 
         <Spacer />
 
@@ -64,9 +80,9 @@ export function Component() {
           </HStack>
 
           <ProductLineFilter
-            devices={data?.devices ?? []}
-            onChangeLineIds={setSelectedLineIds}
-            selectedLineIds={selectedLineIds}
+            devices={uidb.devices ?? []}
+            onChangeLineIds={setSelectedProductLineIds}
+            selectedLineIds={selectedProductLineIds}
           />
         </HStack>
       </HStack>
@@ -206,112 +222,6 @@ function SearchField({ devices }: { devices: UidbDevice[] }) {
         </Combobox>
       </div>
       <IconSearch label="Search..." className="absolute" />
-      <div className="text-xs text-gray-4">{devices.length ?? 0} devices</div>
     </HStack>
-  );
-}
-
-function Grid({ devices }: { devices: UidbDevice[] }) {
-  return (
-    <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-        {devices.map((device) => (
-          <GridItem
-            key={device.id}
-            image={
-              <ProductIcon icon={device.icon} minHeight={100} minWidth={100} />
-            }
-            label={device.line?.name}
-            title={
-              <Link
-                to={`/devices/${device.id}`}
-                className="before:content-[''] before:absolute before:left-0 before:top-0 before:w-full before:h-full hover:underline"
-              >
-                {device.product?.name}
-              </Link>
-            }
-            description={device.shortnames?.filter((s) => !!s).join(", ")}
-          />
-        ))}
-      </div>
-    </>
-  );
-}
-
-function GridItem({
-  label,
-  description,
-  image,
-  title,
-}: {
-  label: ReactNode;
-  image: ReactNode;
-  description: ReactNode;
-  title: ReactNode;
-}) {
-  return (
-    <div className="border border-solid border-neutral-neutral-03-light rounded-lg relative">
-      <div
-        style={{ height: "100px" }}
-        className="bg-neutral-web-unifi-color-neutral-01 relative"
-      >
-        <div
-          className="absolute bg-neutral-web-unifi-color-neutral-00 px-1 py-0.5 text-primary-web-unifi-color-ublue-06 text-xs flex"
-          style={{ top: "3px", right: "2.6667px" }}
-        >
-          {label}
-        </div>
-
-        <div className="p-2 flex flex-1 h-full [&>*]:flex-1 [&>*]:object-scale-down">
-          {image}
-        </div>
-      </div>
-      <div className="p-2">
-        <div
-          style={{ height: "40px" }}
-          className="text-text-text-1-light text-sm text-ellipsis whitespace-nowrap overflow-hidden"
-        >
-          {title}
-        </div>
-        <div className="text-text-text-3 text-xs text-ellipsis whitespace-nowrap overflow-hidden">
-          {description}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function List({ devices }: { devices: UidbDevice[] }) {
-  return (
-    <Table className="flex-1">
-      <Thead>
-        <Tr>
-          <Th />
-          <Th>Product Line</Th>
-          <Th>Name</Th>
-        </Tr>
-      </Thead>
-      <Tbody>
-        {devices?.map((device) => (
-          <Tr key={device.id}>
-            <Td className="p-1.5 align-middle w-8">
-              <ProductIcon
-                icon={device.icon}
-                minHeight={20}
-                minWidth={20}
-                fallback={null}
-                className="h-5 w-5 inline-block"
-              />
-            </Td>
-            <Td className="px-2 py-0.5">
-              <Link to={`/devices/${device.id}`}>{device.line?.name}</Link>
-            </Td>
-            <Td className="px-2 py-0.5">
-              <Link to={`/devices/${device.id}`}>{device.product?.name}</Link>
-            </Td>
-          </Tr>
-        ))}
-      </Tbody>
-    </Table>
   );
 }
