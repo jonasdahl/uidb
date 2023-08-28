@@ -20,9 +20,9 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/devices/:deviceId",
-        lazy: () => import("./routes/devices.$deviceId/route.tsx"),
+        lazy: () => import("./routes/devices.$deviceId/_route.tsx"),
       },
-      { path: "/devices", lazy: () => import("./routes/devices/route.tsx") },
+      { path: "/devices", lazy: () => import("./routes/devices/_route.tsx") },
       { path: "/", loader: () => redirect("/devices") },
       { path: "*", lazy: () => import("./routes/404.tsx") },
     ],
