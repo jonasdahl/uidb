@@ -1,6 +1,6 @@
 # Ubiquiti UIDB Visualizer
 
-The latest `main` branch code is automatically deployed to [ancient-brook-2300.fly.dev](https://ancient-brook-2300.fly.dev).
+The latest `main` branch code is automatically deployed to [ancient-brook-2300.fly.dev](https://ancient-brook-2300.fly.dev). The app is a single page application (SPA) but might transition into a server rendered app later on.
 
 ## Development and contribution
 
@@ -8,7 +8,7 @@ To get started developing the app, you'll need to install both [NodeJS](https://
 
 ### Styling
 
-The project uses [Tailwind](https://tailwindcss.com/) integrated with PostCSS into Vite for styling. As we're aiming to move over to our internal styling tools, please try to keep the usage to a minimum and if possible, place any style specific components in /src/components/ui.
+The project uses [Tailwind CSS](https://tailwindcss.com/) integrated with PostCSS into Vite for styling. As we're aiming to move over to our internal styling tools, please try to keep the usage to a minimum and if possible, place any style specific components in /src/components/ui.
 
 ### Routing
 
@@ -17,3 +17,11 @@ This app uses [React Router](https://reactrouter.com/en/main) and is currently a
 ### Running tests
 
 Start the interactive test runner with `npm run test`. The tests will automatically run in Github Actions when pushed. We use [vitest](https://vitest.dev/) as testing framework and [msw](https://mswjs.io/) for mocking external APIs. We're also aiming to add integration tests with Playwright or Cypress.
+
+### Building the app
+
+You can build (typecheck and generate the vite output) using `npm run build`. The files produced in `/dist` represents the full SPA.
+
+## Docker and Fly.io
+
+A docker image is built and deployed to Fly.io on every successful Github Actions pipeline run. See the Dockerfile in the root of the repository as reference. It basically serves the static files generated from `npm run build` using nginx.
