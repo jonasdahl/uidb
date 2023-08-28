@@ -26,6 +26,10 @@ To create a new test, create a new file next to the file you want to test, with 
 
 You can build (typecheck and generate the vite output) using `npm run build`. The files produced in `/dist` represents the full SPA.
 
+### Third-party libraries
+
+Please try to encapsulate third-party dependencies and build abstractions on them, instead of spreading them out (the imports, that is) all over the app. Try to keep them to a few files, in case we want to switch them out later.
+
 ## Docker and Fly.io
 
 A docker image is built and deployed to Fly.io on every successful Github Actions pipeline run. See the Dockerfile in the root of the repository as reference. It basically serves the static files generated from `npm run build` using nginx.

@@ -6,6 +6,9 @@ import { HStack } from "./h-stack";
 import { IconSearch } from "./icons/search";
 import { Input } from "./input";
 
+/**
+ * A search input field that shows suggestions and acts when selected.
+ */
 export function SearchInput<TSuggestion extends { id: string }>({
   onSelect,
   onChange,

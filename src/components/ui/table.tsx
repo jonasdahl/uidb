@@ -1,6 +1,21 @@
 import cx from "classnames";
 import { ComponentProps } from "react";
 
+/**
+ * @example ```jsx
+ * <Table>
+ *  <Thead>
+ *   <Tr>
+ *    <Th>...</Th>
+ *   </Tr>
+ *  </Thead>
+ *  <Tbody>
+ *   <Tr>
+ *    <Td>...</Td>
+ *   </Tr>
+ *  </Tbody>
+ * </Table>
+ */
 export function Table(props: ComponentProps<"table">) {
   return (
     <table

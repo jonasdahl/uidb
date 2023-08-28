@@ -3,6 +3,9 @@ import { ComponentProps, forwardRef } from "react";
 
 type Props = ComponentProps<"div"> & { direction?: "row" | "column" };
 
+/**
+ * A vertical stack of items.
+ */
 export const Stack = forwardRef<HTMLDivElement, Props>(function Stack(
   { direction = "column", ...props },
   ref
