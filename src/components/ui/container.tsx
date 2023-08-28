@@ -1,3 +1,4 @@
+import cx from "classnames";
 import { ComponentProps, forwardRef } from "react";
 
 export const Container = forwardRef<HTMLDivElement, ComponentProps<"div">>(
@@ -5,14 +6,7 @@ export const Container = forwardRef<HTMLDivElement, ComponentProps<"div">>(
     return (
       <div
         {...props}
-        style={{
-          marginLeft: "auto",
-          marginRight: "auto",
-          maxWidth: "1200px",
-          paddingLeft: "20px",
-          paddingRight: "20px",
-          ...props.style,
-        }}
+        className={cx(props.className, "mx-auto px-5 max-w-7xl w-full")}
         ref={ref}
       />
     );

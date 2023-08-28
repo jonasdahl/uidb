@@ -9,6 +9,7 @@ import { IconChevronLeft } from "../../components/ui/icons/chevron-left";
 import { IconChevronRight } from "../../components/ui/icons/chevron-right";
 import { Spacer } from "../../components/ui/spacer";
 import { getUidb, uidbDeviceType } from "../../services/uidb";
+import { useReturnToUrl } from "../../utils/return-to";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const uidb = await getUidb();
@@ -42,12 +43,14 @@ export function Component() {
     ReturnType<typeof loader>
   >;
 
+  const backUrl = useReturnToUrl();
+
   return (
     <div>
       <div className="py-0.5">
         <div className="px-8 py-4 flex flex-row gap-1">
           <NavLink
-            to="/"
+            to={backUrl ?? "/"}
             icon={<IconChevronLeft label="Go back" />}
             label="Back"
           />

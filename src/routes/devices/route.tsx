@@ -2,8 +2,13 @@ import { Combobox } from "@headlessui/react";
 import cx from "classnames";
 import { matchSorter } from "match-sorter";
 import { useState } from "react";
-import { useLoaderData } from "react-router-dom";
+import {
+  LoaderFunctionArgs,
+  useLoaderData,
+  useSearchParams,
+} from "react-router-dom";
 import { pipe, sortBy, uniqBy } from "remeda";
+import { z } from "zod";
 import { Button } from "../../components/ui/button";
 import { Checkbox } from "../../components/ui/checkbox";
 import { Container } from "../../components/ui/container";
@@ -23,17 +28,61 @@ import { splitString } from "../../utils/split-string";
 import { Grid } from "./grid";
 import { List } from "./list";
 
-export async function loader() {
+const displayTypeSchema = z
+  .union([z.literal("list"), z.literal("grid")])
+  .optional();
+
+export async function loader({ request }: LoaderFunctionArgs) {
   const uidb = await getUidb();
-  return { uidb };
+  const url = new URL(request.url);
+
+  // Get the display type from the URL, or default to "list"
+  const displayTypeResult = displayTypeSchema.safeParse(
+    url.searchParams.get("displayType")
+  );
+  const displayType = displayTypeResult.success
+    ? displayTypeResult.data
+    : "list";
+
+  // Get selected product line IDs from the URL
+  const productLineIds = url.searchParams.getAll("line");
+
+  return { uidb, displayType, productLineIds };
 }
 
 export function Component() {
-  const { uidb } = useLoaderData() as Awaited<ReturnType<typeof loader>>;
+  const {
+    uidb,
+    displayType,
+    productLineIds: selectedProductLineIds,
+  } = useLoaderData() as Awaited<ReturnType<typeof loader>>;
 
-  const [selectedProductLineIds, setSelectedProductLineIds] = useState(
-    [] as string[]
-  );
+  const [, setSearchParams] = useSearchParams();
+
+  const setDisplayType = (displayType: "list" | "grid") => {
+    setSearchParams(
+      (previousParams) => {
+        const newParams = new URLSearchParams(previousParams.toString());
+        newParams.set("displayType", displayType);
+        return newParams;
+      },
+      { replace: true }
+    );
+  };
+
+  const setSelectedProductLineIds = (lineIds: string[]) => {
+    setSearchParams(
+      (previousParams) => {
+        const newParams = new URLSearchParams(previousParams.toString());
+        newParams.delete("line");
+        for (const lineId of lineIds) {
+          newParams.append("line", lineId);
+        }
+        return newParams;
+      },
+      { replace: true }
+    );
+  };
 
   const devices =
     uidb.devices.filter((device) => {
@@ -46,55 +95,57 @@ export function Component() {
   const totalDevices = uidb?.devices.length ?? 0;
   const showingDevices = devices?.length ?? 0;
 
-  const [displayType, setDisplayType] = useState("list" as "list" | "grid");
-
   return (
-    <Container className="h-full flex flex-col pb-4">
-      <HStack className="py-4">
-        <HStack className="space-x-2">
-          <SearchField devices={devices} />
-          <div className="text-xs text-gray-4">
-            {totalDevices !== showingDevices
-              ? `Showing ${showingDevices.toLocaleString()} of ${totalDevices.toLocaleString()} devices`
-              : `${totalDevices.toLocaleString()} devices`}
-          </div>
-        </HStack>
-
-        <Spacer />
-
-        <HStack className="space-x-2">
-          <HStack>
-            <Button
-              isActive={displayType === "list"}
-              onClick={() => setDisplayType("list")}
-            >
-              <IconList label="Show as list" />
-            </Button>
-
-            <Button
-              isActive={displayType === "grid"}
-              onClick={() => setDisplayType("grid")}
-            >
-              <IconGrid label="Show as grid" />
-            </Button>
+    <div className="flex flex-col h-full">
+      <Container>
+        <HStack className="py-4">
+          <HStack className="space-x-2">
+            <SearchField devices={devices} />
+            <div className="text-xs text-gray-4">
+              {totalDevices !== showingDevices
+                ? `Showing ${showingDevices.toLocaleString()} of ${totalDevices.toLocaleString()} devices`
+                : `${totalDevices.toLocaleString()} devices`}
+            </div>
           </HStack>
 
-          <ProductLineFilter
-            devices={uidb.devices ?? []}
-            onChangeLineIds={setSelectedProductLineIds}
-            selectedLineIds={selectedProductLineIds}
-          />
-        </HStack>
-      </HStack>
+          <Spacer />
 
-      <div className="flex-1 overflow-auto" key={displayType}>
-        {displayType === "grid" ? (
-          <Grid devices={devices ?? []} />
-        ) : (
-          <List devices={devices ?? []} />
-        )}
+          <HStack className="space-x-2">
+            <HStack>
+              <Button
+                isActive={displayType === "list"}
+                onClick={() => setDisplayType("list")}
+              >
+                <IconList label="Show as list" />
+              </Button>
+
+              <Button
+                isActive={displayType === "grid"}
+                onClick={() => setDisplayType("grid")}
+              >
+                <IconGrid label="Show as grid" />
+              </Button>
+            </HStack>
+
+            <ProductLineFilter
+              devices={uidb.devices ?? []}
+              onChangeLineIds={setSelectedProductLineIds}
+              selectedLineIds={selectedProductLineIds}
+            />
+          </HStack>
+        </HStack>
+      </Container>
+
+      <div className="flex-1 overflow-auto pb-4" key={displayType}>
+        <Container className="flex">
+          {displayType === "grid" ? (
+            <Grid devices={devices ?? []} />
+          ) : (
+            <List devices={devices ?? []} />
+          )}
+        </Container>
       </div>
-    </Container>
+    </div>
   );
 }
 
