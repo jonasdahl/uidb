@@ -1,7 +1,6 @@
 import cx from "classnames";
 import { ComponentProps, ReactNode, useState } from "react";
 import { LoaderFunctionArgs, useLoaderData } from "react-router-dom";
-import { z } from "zod";
 import { Link } from "../../components/link";
 import { ProductIcon } from "../../components/product-icon";
 import { Code } from "../../components/ui/code";
@@ -18,13 +17,7 @@ import { getUidb } from "../../utils/uidb";
 // with something like Remix or Next.js.
 export async function loader({ params }: LoaderFunctionArgs) {
   const uidb = await getUidb();
-  const deviceIndex = uidb?.devices.findIndex((d) => {
-    const parsed = z.object({ id: z.string() }).safeParse(d);
-    if (!parsed.success) {
-      return false;
-    }
-    return parsed.data.id === params.deviceId;
-  });
+  const deviceIndex = uidb?.devices.findIndex((d) => d.id === params.deviceId);
   const device = uidb?.devices[deviceIndex];
 
   if (!device) {
@@ -44,7 +37,14 @@ export function Component() {
 
   const [showAllDetails, setShowAllDetails] = useState(false);
 
-  const backUrl = useReturnToUrl();
+  const backUrl = useReturnToUrl("/devices");
+
+  const maxPower = Math.max(
+    device.unifi?.network?.radios?.na?.maxPower ?? 0,
+    device.unifi?.network?.radios?.ng?.maxPower ?? 0
+  );
+  const maxSpeed = device.unifi?.network?.ethernetMaxSpeedMegabitsPerSecond;
+  const numberOfPorts = device.unifi?.network?.numberOfPorts;
 
   return (
     <div>
@@ -72,11 +72,9 @@ export function Component() {
           ) : null}
         </div>
       </div>
+
       <Container style={{ maxWidth: "768px" }} className="pb-10">
-        <div
-          className="grid grid-cols-1 md:grid-cols-2 gap-8 px-8 pb-8"
-          style={{ gridTemplateColumns: "auto 1fr" }}
-        >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 px-8 pb-8">
           <div className="bg-neutral-web-unifi-color-neutral-01 rounded-lg flex items-center flex-col p-4">
             {device.icon ? (
               <div className="w-64 h-64 flex">
@@ -104,10 +102,25 @@ export function Component() {
               label="Short name"
               value={device.shortnames?.filter((s) => !!s).join(", ")}
             />
+            {maxPower ? (
+              <DeviceProperty label="Max. Power" value={`${maxPower} W`} />
+            ) : null}
+            {maxSpeed ? (
+              <DeviceProperty
+                label="Speed"
+                value={`${maxSpeed?.toLocaleString()} Mbps`}
+              />
+            ) : null}
+            {numberOfPorts ? (
+              <DeviceProperty
+                label="Number of ports"
+                value={numberOfPorts.toLocaleString()}
+              />
+            ) : null}
           </div>
         </div>
 
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center mb-4">
           <CTA onClick={() => setShowAllDetails((old) => !old)}>
             See All Details as JSON
           </CTA>
@@ -132,11 +145,12 @@ function NavLink({
     <Link
       to={to}
       className="bg-neutral-web-unifi-color-neutral-00 shadow-low-light text-text-text-3 p-1 text-sm flex flex-row rounded"
+      enableFocusStyle
     >
       {icon ? (
         <span
-          style={{ display: "inline-block", padding: "4px 7px" }}
-          className="text-neutral-neutral-08-light"
+          style={{ padding: "4px 7px" }}
+          className="text-neutral-neutral-08-light inline-block"
         >
           {icon}
         </span>
@@ -153,10 +167,9 @@ function CTA(props: ComponentProps<"button">) {
       className={cx(
         "text-primary-web-unifi-color-ublue-06 text-sm",
         "hover:text-primary-web-unifi-color-ublue-07",
-        "border border-transparent outline-none",
         "py-1.5 px-0.5",
         "rounded",
-        "focus:border-primary-web-unifi-color-ublue-06",
+        "focus:outline-1 outline-none focus:-outline-offset-0 focus:outline-border-primary-web-unifi-color-ublue-06",
         props.className
       )}
     />

@@ -26,10 +26,14 @@ export function List({ devices }: { devices: UidbDevice[] }) {
               />
             </Td>
             <Td className="px-2 py-0.5">
-              <Link to={`/devices/${device.id}`}>{device.line?.name}</Link>
+              <Link to={`/devices/${device.id}`} enableFocusStyle>
+                {device.line?.name}
+              </Link>
             </Td>
             <Td className="px-2 py-0.5">
-              <Link to={`/devices/${device.id}`}>{device.product?.name}</Link>
+              <Link to={`/devices/${device.id}`} enableFocusStyle>
+                {device.product?.name}
+              </Link>
             </Td>
           </Tr>
         ))}

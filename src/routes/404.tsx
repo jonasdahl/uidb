@@ -10,7 +10,7 @@ export function Component() {
       <h1 className="text-4xl">Whoops!</h1>
       <h2>
         We couldn't find that page. Please try again later or visit the{" "}
-        <Link to="/" className="underline">
+        <Link to="/" className="underline" enableFocusStyle>
           Index page
         </Link>
         .

@@ -13,7 +13,7 @@ export const Input = forwardRef<HTMLInputElement, ComponentProps<"input">>(
           "flex-1",
           "h-8",
           "px-2",
-          "border border-transparent outline-none",
+          "border border-transparent focus:outline-none",
           "hover:bg-neutral-neutral-03-light",
           "focus:border-primary-web-unifi-color-ublue-06",
           "focus:bg-neutral-2",

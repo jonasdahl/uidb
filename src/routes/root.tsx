@@ -30,7 +30,7 @@ export function ErrorBoundary() {
         <h1 className="text-4xl">Whoops!</h1>
         <h2>
           An error occurred. Please try again later or visit the{" "}
-          <Link to="/" className="underline">
+          <Link to="/" className="underline" enableFocusStyle>
             Index page
           </Link>
           .

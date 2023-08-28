@@ -5,9 +5,9 @@ export function useCurrentReturnToUrl() {
   return encodeURIComponent(`${location.pathname}${location.search}`);
 }
 
-export function useReturnToUrl() {
+export function useReturnToUrl(fallback: string) {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const returnTo = searchParams.get("returnTo");
-  return returnTo;
+  return returnTo === "null" ? fallback : returnTo ?? fallback;
 }

@@ -1,10 +1,11 @@
 import { ReactComponent as Logo } from "../../assets/logo.svg";
 import { Link } from "../link";
+import { HStack } from "../ui/h-stack";
 import { Spacer } from "../ui/spacer";
 
 export function TopBar() {
   return (
-    <div className="flex flex-row items-center bg-neutral-web-unifi-color-neutral-02 text-web-unifi-text-3 pr-8 space-x-2">
+    <HStack className="bg-neutral-web-unifi-color-neutral-02 text-web-unifi-text-3 pr-8 space-x-2">
       <Link
         to="/"
         className="block border border-solid border-transparent focus:border-primary-web-unifi-color-ublue-06 outline-none text-text-web-unifi-text-2 hover:text-primary-web-unifi-color-ublue-06"
@@ -19,8 +20,10 @@ export function TopBar() {
       >
         Devices
       </Link>
+
       <Spacer />
-      <div className="text-text-web-unifi-text-3 text-sm">Jonas</div>
-    </div>
+
+      <div className="text-text-web-unifi-text-3 text-sm">Jonas Dahl</div>
+    </HStack>
   );
 }

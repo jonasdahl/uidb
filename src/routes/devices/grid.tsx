@@ -19,7 +19,7 @@ export function Grid({ devices }: { devices: UidbDevice[] }) {
           title={
             <Link
               to={`/devices/${device.id}?returnTo=${returnTo}`}
-              className="before:content-[''] before:absolute before:left-0 before:top-0 before:w-full before:h-full hover:underline"
+              className="before:content-[''] before:absolute before:left-0 before:top-0 before:w-full before:h-full hover:underline focus:outline-none"
             >
               {device.product?.name}
             </Link>

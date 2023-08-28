@@ -25,7 +25,7 @@ export function ProductGridItem({
   title: ReactNode;
 }) {
   return (
-    <div className="border border-solid border-neutral-neutral-03-light rounded-lg relative">
+    <div className="border border-solid border-neutral-neutral-03-light rounded-lg relative focus-within:border-u-blue-6-primary overflow-hidden">
       <div
         style={{ height: "100px" }}
         className="bg-neutral-web-unifi-color-neutral-01 relative"
