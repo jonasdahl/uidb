@@ -6,7 +6,7 @@ In addition to this Readme, please feel free to have a look at the Github Action
 
 ## Development and contribution
 
-To get started developing the app, you'll need to install both [NodeJS](https://nodejs.org/en) (latest LTS) and npm. You should then be able to clone this repository, run `npm install` in the root of it, and then `npm run dev`. That will start the [Vite](https://vitejs.dev/) dev server, which is configured to hot reload on file changes.
+To get started developing the app, you'll need to install both [NodeJS](https://nodejs.org/en) (latest LTS) and npm. You should then be able to clone this repository, run `npm install` in the root of it, and then `npm run dev`. That will start the [Vite](https://vitejs.dev/) dev server, which is configured to hot reload on file change.
 
 ### Styling
 
