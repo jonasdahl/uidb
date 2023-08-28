@@ -1,6 +1,6 @@
 # UIDB Visualizer
 
-The latest `main` branch code is automatically deployed to [ancient-brook-2300.fly.dev](https://ancient-brook-2300.fly.dev). The app is a single page application (SPA) but might transition into a server rendered app later on.
+The latest `main` branch code is automatically deployed to [ancient-brook-2300.fly.dev](https://ancient-brook-2300.fly.dev). The app is a single page application (SPA) with React but might transition into a server rendered app later on.
 
 In addition to this Readme, please feel free to have a look at the Github Actions pipeline (`/.github/workflows/deploy.yaml`) and the Dockerfile (`/Dockerfile`) for inspiration on how to run the project.
 
