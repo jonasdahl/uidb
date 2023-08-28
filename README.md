@@ -14,9 +14,11 @@ The project uses [Tailwind CSS](https://tailwindcss.com/) integrated with PostCS
 
 This app uses [React Router](https://reactrouter.com/en/main) and is currently a client side only SPA. To enable a future transition to SSR, please put new routes in `/src/routes` and follow the [Remix Flat Routes naming convention](https://github.com/kiliman/remix-flat-routes). React Router enables a `loader` function to be defined for each route, which will load the data required. The goal is to move those loader functions to the server, using either Next or Remix.
 
-### Running tests
+### Running and writing tests
 
-Start the interactive test runner with `npm run test`. The tests will automatically run in Github Actions when pushed. We use [vitest](https://vitest.dev/) as testing framework and [msw](https://mswjs.io/) for mocking external APIs. We're also aiming to add integration tests with Playwright or Cypress.
+Start the interactive test runner with `npm run test`. The tests will automatically run on Github Actions when pushed. We use [vitest](https://vitest.dev/) as testing framework and [msw](https://mswjs.io/) for mocking external APIs. We're also aiming to add integration tests with Playwright or Cypress.
+
+To create a new test, create a new file next to the file you want to test, with the file ending `.test.tsx`. It will automatically be detected and included in the test suite. See [vitest Docs](https://vitest.dev/) and [React Testing Library](https://testing-library.com/docs/) for inspiration.
 
 ### Building the app
 

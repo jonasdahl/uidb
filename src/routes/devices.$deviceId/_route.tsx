@@ -11,10 +11,10 @@ import { Spacer } from "../../components/ui/spacer";
 import { useReturnToUrl } from "../../utils/return-to";
 import { getUidb } from "../../utils/uidb";
 
-// React router will run this every page load/client side navigation.
-// This loads uidb and parses some data from the URL that we need.
+// React router will run this every page load/client side navigation on this route.
+// This loads uidb and finds the device with the given ID.
 // In the future, this should be able to run on the server instead,
-// with something like Remix or Next.js.
+// with something like Remix or Next.js, and we will then avoid sending the entire uidb to the client.
 export async function loader({ params }: LoaderFunctionArgs) {
   const uidb = await getUidb();
   const deviceIndex = uidb?.devices.findIndex((d) => d.id === params.deviceId);
@@ -30,6 +30,9 @@ export async function loader({ params }: LoaderFunctionArgs) {
   return { device, previousDeviceId, nextDeviceId };
 }
 
+/**
+ * The component that mounts on /devices/$deviceId route. It is a child of the root layout only.
+ */
 export function Component() {
   const { device, nextDeviceId, previousDeviceId } = useLoaderData() as Awaited<
     ReturnType<typeof loader>

@@ -1,5 +1,3 @@
-import { Combobox } from "@headlessui/react";
-import cx from "classnames";
 import { matchSorter } from "match-sorter";
 import { useMemo, useState } from "react";
 import {
@@ -17,8 +15,6 @@ import { Container } from "../../components/ui/container";
 import { HStack } from "../../components/ui/h-stack";
 import { IconGrid } from "../../components/ui/icons/grid";
 import { IconList } from "../../components/ui/icons/list";
-import { IconSearch } from "../../components/ui/icons/search";
-import { Input } from "../../components/ui/input";
 import {
   Popover,
   PopoverBody,
@@ -27,9 +23,12 @@ import {
   PopoverTitle,
   PopoverTrigger,
 } from "../../components/ui/popover";
+import {
+  SearchInput,
+  SearchInputSuggestion,
+} from "../../components/ui/search-input";
 import { Spacer } from "../../components/ui/spacer";
 import { useCurrentReturnToUrl } from "../../utils/return-to";
-import { splitString } from "../../utils/split-string";
 import { UidbDevice, getUidb } from "../../utils/uidb";
 import { Grid } from "./grid";
 import { List } from "./list";
@@ -239,65 +238,24 @@ function SearchField({ devices }: { devices: UidbDevice[] }) {
   }, [devices, query]);
 
   return (
-    <HStack className="space-x-2 relative">
-      <div className="relative">
-        <Combobox
-          nullable
-          onChange={(deviceId) => {
-            if (deviceId) {
-              navigate(`/devices/${deviceId}?returnTo=${returnTo}`);
-            }
-          }}
-        >
-          <Combobox.Input
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search..."
-            autoComplete="off"
-            as={Input}
-            className="pl-8"
+    <SearchInput
+      onChange={setQuery}
+      suggestions={suggestions}
+      onSelect={(deviceId) => {
+        if (deviceId) {
+          navigate(`/devices/${deviceId}?returnTo=${returnTo}`);
+        }
+      }}
+      renderSuggestion={(device, { selected, active }) => {
+        return (
+          <SearchInputSuggestion
+            active={active}
+            selected={selected}
+            label={device.product?.name ?? ""}
+            searchString={query}
           />
-          <Combobox.Options className="absolute w-full rounded-b-lg bg-neutral-web-unifi-color-neutral-00 shadow-popover py-2 z-popover">
-            {suggestions.length === 0 ? (
-              <div className="px-2 py-1.5 text-sm border border-solid border-transparent">
-                No suggestions. Try another search.
-              </div>
-            ) : (
-              suggestions.map((device) => {
-                const parts = splitString(query, device.product?.name ?? "");
-                return (
-                  <Combobox.Option key={device.id} value={device.id}>
-                    {({ selected, active }) => (
-                      <div
-                        className={cx(
-                          "text-sm text-text-web-unifi-text-2 px-2 py-1.5 rounded-sm cursor-pointer border border-solid",
-                          "hover:bg-neutral-web-unifi-color-neutral-02 hover:text-text-web-unifi-text-2",
-                          selected || active
-                            ? "border-primary-web-unifi-color-ublue-06"
-                            : "border-transparent"
-                        )}
-                      >
-                        {parts.map((part, i) => {
-                          return (
-                            <span
-                              key={i}
-                              className={
-                                part.match ? "font-bold underline" : undefined
-                              }
-                            >
-                              {part.content}
-                            </span>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </Combobox.Option>
-                );
-              })
-            )}
-          </Combobox.Options>
-        </Combobox>
-      </div>
-      <IconSearch label="Search..." className="absolute" />
-    </HStack>
+        );
+      }}
+    />
   );
 }
