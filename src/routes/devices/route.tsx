@@ -10,6 +10,7 @@ import {
 } from "react-router-dom";
 import { pipe, sortBy, uniqBy } from "remeda";
 import { z } from "zod";
+import { ActionButton } from "../../components/ui/action-button";
 import { Button } from "../../components/ui/button";
 import { Checkbox } from "../../components/ui/checkbox";
 import { Container } from "../../components/ui/container";
@@ -20,7 +21,10 @@ import { IconSearch } from "../../components/ui/icons/search";
 import { Input } from "../../components/ui/input";
 import {
   Popover,
+  PopoverBody,
   PopoverContent,
+  PopoverFooter,
+  PopoverTitle,
   PopoverTrigger,
 } from "../../components/ui/popover";
 import { Spacer } from "../../components/ui/spacer";
@@ -114,19 +118,19 @@ export function Component() {
 
           <HStack className="space-x-2">
             <HStack>
-              <Button
+              <ActionButton
                 isActive={displayType === "list"}
                 onClick={() => setDisplayType("list")}
               >
                 <IconList label="Show as list" />
-              </Button>
+              </ActionButton>
 
-              <Button
+              <ActionButton
                 isActive={displayType === "grid"}
                 onClick={() => setDisplayType("grid")}
               >
                 <IconGrid label="Show as grid" />
-              </Button>
+              </ActionButton>
             </HStack>
 
             <ProductLineFilter
@@ -169,10 +173,11 @@ function ProductLineFilter({
   return (
     <Popover>
       <PopoverTrigger>
-        <Button isActive={!!selectedLineIds.length}>Filter</Button>
+        <ActionButton isActive={!!selectedLineIds.length}>Filter</ActionButton>
       </PopoverTrigger>
-      <PopoverContent title="Product line">
-        <div className="space-y-2 max-h-60 overflow-auto px-4 py-0.5">
+      <PopoverContent>
+        <PopoverTitle>Product line</PopoverTitle>
+        <PopoverBody>
           {productLines.map((line) => {
             const lineId = line?.id;
             if (!lineId) {
@@ -195,20 +200,20 @@ function ProductLineFilter({
               </Checkbox>
             );
           })}
-        </div>
-        <div className="px-4">
-          <button
-            className={cx(
-              "text-sm",
+        </PopoverBody>
+
+        <PopoverFooter>
+          <Button
+            className={
               selectedLineIds.length === 0
                 ? "text-semantic-destructive-web-unifi-color-red-03"
                 : "text-semantic-destructive-web-unifi-color-red-06"
-            )}
+            }
             onClick={() => onChangeLineIds([])}
           >
             Reset
-          </button>
-        </div>
+          </Button>
+        </PopoverFooter>
       </PopoverContent>
     </Popover>
   );
