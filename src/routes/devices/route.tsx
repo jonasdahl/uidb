@@ -18,8 +18,9 @@ import {
   PopoverTrigger,
 } from "../../components/ui/popover";
 import { Spacer } from "../../components/ui/spacer";
+import { Table, Tbody, Td, Th, Thead, Tr } from "../../components/ui/table";
 import { useUidb } from "../../hooks/use-uidb";
-import { UidbDevice, uidbDeviceType } from "../../services/uidb";
+import { UidbDevice } from "../../services/uidb";
 
 /**
  * Splits text into parts where each occurence of search is a separate part.
@@ -56,11 +57,7 @@ function splitMatches(search: string, text: string) {
 export function Component() {
   const { data } = useUidb();
   const [selectedLineIds, setSelectedLineIds] = useState<string[]>([]);
-  const productLines = pipe(
-    data?.devices.map((d) => d.line) ?? [],
-    uniqBy((line) => line?.id),
-    sortBy((line) => line?.name ?? "")
-  );
+
   const devices =
     data?.devices.filter((device) => {
       if (selectedLineIds.length === 0) {
@@ -70,84 +67,15 @@ export function Component() {
     }) ?? [];
   // const totalDevices = data?.devices.length ?? 0;
 
-  const [query, setQuery] = useState("");
-
-  const suggestions = !query
-    ? []
-    : matchSorter(data?.devices ?? [], query, {
-        keys: [(d) => d.product?.name ?? ""],
-      }).slice(0, 10);
-
   const [displayType, setDisplayType] = useState("list" as "list" | "grid");
 
   return (
-    <Container>
+    <Container className="h-full flex flex-col pb-4">
       <HStack className="py-4">
-        <HStack className="space-x-2 relative">
-          <div className="relative">
-            <Combobox nullable>
-              <Combobox.Input
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder="Search..."
-                autoComplete="off"
-                as={Input}
-                className="pl-8"
-              />
-              <Combobox.Options className="absolute w-full rounded-b-lg bg-neutral-web-unifi-color-neutral-00 shadow-popover py-2 z-popover">
-                {suggestions.length === 0 ? (
-                  <div className="px-2 py-1.5 text-sm border border-solid border-transparent">
-                    No suggestions. Try another search.
-                  </div>
-                ) : (
-                  suggestions.map((device) => {
-                    const parts = splitMatches(
-                      query,
-                      device.product?.name ?? ""
-                    );
-                    return (
-                      <Combobox.Option
-                        key={device.id}
-                        value={device.product?.name}
-                      >
-                        {({ selected, active }) => (
-                          <div
-                            className={cx(
-                              "text-sm text-text-web-unifi-text-2 px-2 py-1.5 rounded-sm cursor-pointer border border-solid",
-                              "hover:bg-neutral-web-unifi-color-neutral-02 hover:text-text-web-unifi-text-2",
-                              selected || active
-                                ? "border-primary-web-unifi-color-ublue-06"
-                                : "border-transparent"
-                            )}
-                          >
-                            {parts.map((part) => {
-                              return (
-                                <span
-                                  className={
-                                    part.match
-                                      ? "font-bold underline"
-                                      : undefined
-                                  }
-                                >
-                                  {part.content}
-                                </span>
-                              );
-                            })}
-                          </div>
-                        )}
-                      </Combobox.Option>
-                    );
-                  })
-                )}
-              </Combobox.Options>
-            </Combobox>
-          </div>
-          <IconSearch label="Search..." className="absolute" />
-          <div className="text-xs text-gray-4">
-            {devices.length ?? 0} devices
-          </div>
-        </HStack>
+        <SearchField devices={data?.devices ?? []} />
 
         <Spacer />
+
         <HStack className="space-x-2">
           <HStack>
             <Button
@@ -165,59 +93,151 @@ export function Component() {
             </Button>
           </HStack>
 
-          <Popover>
-            <PopoverTrigger>
-              <Button isActive={!!selectedLineIds.length}>Filter</Button>
-            </PopoverTrigger>
-            <PopoverContent title="Product line">
-              <div className="space-y-2 max-h-60 overflow-auto px-4 py-0.5">
-                {productLines.map((line) => {
-                  const lineId = line?.id;
-                  if (!lineId) {
-                    return null;
-                  }
-                  const isChecked = selectedLineIds.some((id) => id === lineId);
-                  return (
-                    <Checkbox
-                      key={line.id}
-                      checked={isChecked}
-                      onChange={() =>
-                        setSelectedLineIds((previouslySelected) =>
-                          previouslySelected.some((id) => id === lineId)
-                            ? previouslySelected.filter((id) => id !== lineId)
-                            : [...previouslySelected, lineId]
-                        )
-                      }
-                    >
-                      {line?.name}
-                    </Checkbox>
-                  );
-                })}
-              </div>
-              <div className="px-4">
-                <button
-                  className={cx(
-                    "text-sm",
-                    selectedLineIds.length === 0
-                      ? "text-semantic-destructive-web-unifi-color-red-03"
-                      : "text-semantic-destructive-web-unifi-color-red-06"
-                  )}
-                  onClick={() => setSelectedLineIds([])}
-                >
-                  Reset
-                </button>
-              </div>
-            </PopoverContent>
-          </Popover>
+          <ProductLineFilter
+            devices={data?.devices ?? []}
+            onChangeLineIds={setSelectedLineIds}
+            selectedLineIds={selectedLineIds}
+          />
         </HStack>
       </HStack>
 
-      {displayType === "grid" ? (
-        <Grid devices={devices ?? []} />
-      ) : (
-        <List devices={devices ?? []} />
-      )}
+      <div className="flex-1 overflow-auto" key={displayType}>
+        {displayType === "grid" ? (
+          <Grid devices={devices ?? []} />
+        ) : (
+          <List devices={devices ?? []} />
+        )}
+      </div>
     </Container>
+  );
+}
+
+function ProductLineFilter({
+  devices,
+  selectedLineIds,
+  onChangeLineIds,
+}: {
+  devices: UidbDevice[];
+  selectedLineIds: string[];
+  onChangeLineIds: (newFilter: string[]) => void;
+}) {
+  const productLines = pipe(
+    devices.map((d) => d.line) ?? [],
+    uniqBy((line) => line?.id),
+    sortBy((line) => line?.name ?? "")
+  );
+
+  return (
+    <Popover>
+      <PopoverTrigger>
+        <Button isActive={!!selectedLineIds.length}>Filter</Button>
+      </PopoverTrigger>
+      <PopoverContent title="Product line">
+        <div className="space-y-2 max-h-60 overflow-auto px-4 py-0.5">
+          {productLines.map((line) => {
+            const lineId = line?.id;
+            if (!lineId) {
+              return null;
+            }
+            const isChecked = selectedLineIds.some((id) => id === lineId);
+            return (
+              <Checkbox
+                key={line.id}
+                checked={isChecked}
+                onChange={() =>
+                  onChangeLineIds(
+                    selectedLineIds.some((id) => id === lineId)
+                      ? selectedLineIds.filter((id) => id !== lineId)
+                      : [...selectedLineIds, lineId]
+                  )
+                }
+              >
+                {line?.name}
+              </Checkbox>
+            );
+          })}
+        </div>
+        <div className="px-4">
+          <button
+            className={cx(
+              "text-sm",
+              selectedLineIds.length === 0
+                ? "text-semantic-destructive-web-unifi-color-red-03"
+                : "text-semantic-destructive-web-unifi-color-red-06"
+            )}
+            onClick={() => onChangeLineIds([])}
+          >
+            Reset
+          </button>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+function SearchField({ devices }: { devices: UidbDevice[] }) {
+  const [query, setQuery] = useState("");
+
+  const suggestions = !query
+    ? []
+    : matchSorter(devices, query, {
+        keys: [(d) => d.product?.name ?? ""],
+      }).slice(0, 10);
+
+  return (
+    <HStack className="space-x-2 relative">
+      <div className="relative">
+        <Combobox nullable>
+          <Combobox.Input
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Search..."
+            autoComplete="off"
+            as={Input}
+            className="pl-8"
+          />
+          <Combobox.Options className="absolute w-full rounded-b-lg bg-neutral-web-unifi-color-neutral-00 shadow-popover py-2 z-popover">
+            {suggestions.length === 0 ? (
+              <div className="px-2 py-1.5 text-sm border border-solid border-transparent">
+                No suggestions. Try another search.
+              </div>
+            ) : (
+              suggestions.map((device) => {
+                const parts = splitMatches(query, device.product?.name ?? "");
+                return (
+                  <Combobox.Option key={device.id} value={device.product?.name}>
+                    {({ selected, active }) => (
+                      <div
+                        className={cx(
+                          "text-sm text-text-web-unifi-text-2 px-2 py-1.5 rounded-sm cursor-pointer border border-solid",
+                          "hover:bg-neutral-web-unifi-color-neutral-02 hover:text-text-web-unifi-text-2",
+                          selected || active
+                            ? "border-primary-web-unifi-color-ublue-06"
+                            : "border-transparent"
+                        )}
+                      >
+                        {parts.map((part) => {
+                          return (
+                            <span
+                              className={
+                                part.match ? "font-bold underline" : undefined
+                              }
+                            >
+                              {part.content}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </Combobox.Option>
+                );
+              })
+            )}
+          </Combobox.Options>
+        </Combobox>
+      </div>
+      <IconSearch label="Search..." className="absolute" />
+      <div className="text-xs text-gray-4">{devices.length ?? 0} devices</div>
+    </HStack>
   );
 }
 
@@ -279,52 +299,34 @@ function Grid({ devices }: { devices: UidbDevice[] }) {
 
 function List({ devices }: { devices: UidbDevice[] }) {
   return (
-    <div className="overflow-auto flex-1">
-      <table className="w-full">
-        <thead>
-          <tr className="border-b border-solid border-neutral-neutral-03-light">
-            <td />
-            <th className="text-left font-bold text-sm px-2 py-0.5">
-              Product Line
-            </th>
-            <th className="text-left font-bold text-sm px-2 py-0.5">Name</th>
-          </tr>
-        </thead>
-        <tbody>
-          {devices?.map((rawDevice) => {
-            const deviceResult = uidbDeviceType.safeParse(rawDevice);
-            if (!deviceResult.success) {
-              return null; // TODO Handle
-            }
-
-            const device = deviceResult.data;
-
-            return (
-              <tr
-                key={device.id}
-                className="border-b border-solid border-neutral-neutral-03-light"
-              >
-                <td className="p-1.5 align-middle w-8">
-                  {device.icon ? (
-                    <img
-                      className="h-5 w-5 inline-block"
-                      src={`https://static.ui.com/fingerprint/ui/icons/${device.icon.id}_${device.icon.resolutions?.[0]?.[0]}x${device.icon.resolutions?.[0]?.[1]}.png`}
-                    />
-                  ) : null}
-                </td>
-                <td className="text-text-text-2-light text-sm px-2 py-0.5 align-middle">
-                  <Link to={`/devices/${device.id}`}>{device.line?.name}</Link>
-                </td>
-                <td className="text-text-text-2-light text-sm px-2 py-0.5 align-middle">
-                  <Link to={`/devices/${device.id}`}>
-                    {device.product?.name}
-                  </Link>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
+    <Table className="flex-1">
+      <Thead>
+        <Tr>
+          <Th />
+          <Th>Product Line</Th>
+          <Th>Name</Th>
+        </Tr>
+      </Thead>
+      <Tbody>
+        {devices?.map((device) => (
+          <Tr key={device.id}>
+            <Td className="p-1.5 align-middle w-8">
+              {device.icon ? (
+                <img
+                  className="h-5 w-5 inline-block"
+                  src={`https://static.ui.com/fingerprint/ui/icons/${device.icon.id}_${device.icon.resolutions?.[0]?.[0]}x${device.icon.resolutions?.[0]?.[1]}.png`}
+                />
+              ) : null}
+            </Td>
+            <Td className="px-2 py-0.5">
+              <Link to={`/devices/${device.id}`}>{device.line?.name}</Link>
+            </Td>
+            <Td className="px-2 py-0.5">
+              <Link to={`/devices/${device.id}`}>{device.product?.name}</Link>
+            </Td>
+          </Tr>
+        ))}
+      </Tbody>
+    </Table>
   );
 }
