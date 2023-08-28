@@ -1,7 +1,7 @@
 import { Combobox } from "@headlessui/react";
 import cx from "classnames";
 import { matchSorter } from "match-sorter";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { pipe, sortBy, uniqBy } from "remeda";
 import { Link } from "../../components/link";
 import { ProductIcon } from "../../components/product-icon";
@@ -22,38 +22,7 @@ import { Spacer } from "../../components/ui/spacer";
 import { Table, Tbody, Td, Th, Thead, Tr } from "../../components/ui/table";
 import { useUidb } from "../../hooks/use-uidb";
 import { UidbDevice } from "../../services/uidb";
-
-/**
- * Splits text into parts where each occurence of search is a separate part.
- */
-function splitMatches(search: string, text: string) {
-  const parts: { content: string; match: boolean }[] = [];
-
-  let remaining = text.slice();
-
-  while (remaining.length > 0) {
-    const index = remaining
-      .toLocaleLowerCase()
-      .indexOf(search.toLocaleLowerCase());
-
-    if (index === -1) {
-      parts.push({ content: remaining, match: false });
-      break;
-    }
-
-    if (index > 0) {
-      // Avoid pushing empty strings if the search is at the start of the remaining text.
-      parts.push({ content: remaining.slice(0, index), match: false });
-    }
-    parts.push({
-      content: remaining.slice(index, index + search.length),
-      match: true,
-    });
-    remaining = remaining.slice(index + search.length);
-  }
-
-  return parts;
-}
+import { splitString } from "../../utils/split-string";
 
 export function Component() {
   const { data } = useUidb();
@@ -203,7 +172,7 @@ function SearchField({ devices }: { devices: UidbDevice[] }) {
               </div>
             ) : (
               suggestions.map((device) => {
-                const parts = splitMatches(query, device.product?.name ?? "");
+                const parts = splitString(query, device.product?.name ?? "");
                 return (
                   <Combobox.Option key={device.id} value={device.product?.name}>
                     {({ selected, active }) => (
@@ -247,54 +216,68 @@ function Grid({ devices }: { devices: UidbDevice[] }) {
     <>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         {devices.map((device) => (
-          <div
+          <GridItem
             key={device.id}
-            className="border border-solid border-neutral-neutral-03-light rounded-lg relative"
-          >
-            <div
-              style={{ height: "100px" }}
-              className="bg-neutral-web-unifi-color-neutral-01 relative"
-            >
-              <div
-                className="absolute bg-neutral-web-unifi-color-neutral-00 px-1 py-0.5 text-primary-web-unifi-color-ublue-06 text-xs flex"
-                style={{ top: "3px", right: "2.6667px" }}
+            image={
+              <ProductIcon icon={device.icon} minHeight={100} minWidth={100} />
+            }
+            label={device.line?.name}
+            title={
+              <Link
+                to={`/devices/${device.id}`}
+                className="before:content-[''] before:absolute before:left-0 before:top-0 before:w-full before:h-full hover:underline"
               >
-                {device.line?.name}
-              </div>
-              {device.icon ? (
-                <div className="p-2 flex flex-1 h-full">
-                  <img
-                    style={{
-                      flex: 1,
-                      objectFit: "scale-down",
-                      maxWidth: "100%",
-                      maxHeight: "100%",
-                    }}
-                    src={`https://static.ui.com/fingerprint/ui/icons/${device.icon.id}_${device.icon.resolutions?.[3]?.[0]}x${device.icon.resolutions?.[3]?.[1]}.png`}
-                  />
-                </div>
-              ) : null}
-            </div>
-            <div className="p-2">
-              <div
-                style={{ height: "40px" }}
-                className="text-text-text-1-light text-sm text-ellipsis whitespace-nowrap overflow-hidden"
-              >
-                <Link
-                  to={`/devices/${device.id}`}
-                  className="before:content-[''] before:absolute before:left-0 before:top-0 before:w-full before:h-full"
-                >
-                  {device.product?.name}
-                </Link>
-              </div>
-              <div className="text-text-text-3 text-xs text-ellipsis whitespace-nowrap overflow-hidden">
-                {device.shortnames?.filter((s) => !!s).join(", ")}
-              </div>
-            </div>
-          </div>
+                {device.product?.name}
+              </Link>
+            }
+            description={device.shortnames?.filter((s) => !!s).join(", ")}
+          />
         ))}
       </div>
     </>
+  );
+}
+
+function GridItem({
+  label,
+  description,
+  image,
+  title,
+}: {
+  label: ReactNode;
+  image: ReactNode;
+  description: ReactNode;
+  title: ReactNode;
+}) {
+  return (
+    <div className="border border-solid border-neutral-neutral-03-light rounded-lg relative">
+      <div
+        style={{ height: "100px" }}
+        className="bg-neutral-web-unifi-color-neutral-01 relative"
+      >
+        <div
+          className="absolute bg-neutral-web-unifi-color-neutral-00 px-1 py-0.5 text-primary-web-unifi-color-ublue-06 text-xs flex"
+          style={{ top: "3px", right: "2.6667px" }}
+        >
+          {label}
+        </div>
+
+        <div className="p-2 flex flex-1 h-full [&>*]:flex-1 [&>*]:object-scale-down">
+          {image}
+        </div>
+      </div>
+      <div className="p-2">
+        <div
+          style={{ height: "40px" }}
+          className="text-text-text-1-light text-sm text-ellipsis whitespace-nowrap overflow-hidden"
+        >
+          {title}
+        </div>
+        <div className="text-text-text-3 text-xs text-ellipsis whitespace-nowrap overflow-hidden">
+          {description}
+        </div>
+      </div>
+    </div>
   );
 }
 
